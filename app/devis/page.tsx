@@ -153,7 +153,7 @@ export default function DevisPage() {
         address: formData.address,
         postalCode: formData.postalCode,
         description: formData.description,
-        urgency: formData.urgency.toUpperCase() as 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT',
+        urgency: (formData.urgency === 'tres-urgent' ? 'HIGH' : formData.urgency.toUpperCase()) as 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT',
       }
       
       await devisApi.create(submitData)
