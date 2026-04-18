@@ -97,7 +97,7 @@ export default function AdminDashboard() {
   const stats = data ? [
     {
       title: "Demandes ce mois",
-      value: data.stats.totalDevisThisMonth.toString(),
+      value: (data.stats.totalDevisThisMonth ?? 0).toString(),
       change: "+12%",
       trend: "up" as const,
       icon: FileText,
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
     },
     {
       title: "En attente",
-      value: data.stats.pendingDevis.toString(),
+      value: (data.stats.pendingDevis ?? 0).toString(),
       change: "-5%",
       trend: "down" as const,
       icon: Clock,
@@ -115,7 +115,7 @@ export default function AdminDashboard() {
     },
     {
       title: "Clients actifs",
-      value: data.stats.activeClients.toString(),
+      value: (data.stats.activeClients ?? 0).toString(),
       change: "+8%",
       trend: "up" as const,
       icon: Users,
@@ -124,9 +124,9 @@ export default function AdminDashboard() {
     },
     {
       title: "Revenus estimés",
-      value: formatAmount(data.stats.monthlyRevenue),
-      change: `${data.stats.monthlyChange >= 0 ? "+" : ""}${data.stats.monthlyChange}%`,
-      trend: data.stats.monthlyChange >= 0 ? "up" as const : "down" as const,
+      value: formatAmount(data.stats.monthlyRevenue ?? 0),
+      change: `${(data.stats.monthlyChange ?? 0) >= 0 ? "+" : ""}${(data.stats.monthlyChange ?? 0)}%`,
+      trend: (data.stats.monthlyChange ?? 0) >= 0 ? "up" as const : "down" as const,
       icon: DollarSign,
       color: "text-violet-500",
       bgColor: "bg-violet-500/10",
@@ -143,11 +143,11 @@ const recentQuotes = data?.recentDevis.map(devis => ({
     id: devis.reference,
     client: devis.clientName,
     company: devis.company,
-    service: Array.isArray(devis.services) ? devis.services.join(', ') : (devis.services as any)?.service || '',
+    service: devis.service,
     location: devis.location,
     date: formatDate(devis.createdAt),
     status: devis.status,
-    amount: formatAmount((devis as any).estimatedAmount || 0),
+    amount: formatAmount(devis.estimatedAmount),
   })) || []
 
   const topServices = data?.topServices.map(s => ({
