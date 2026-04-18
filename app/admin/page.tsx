@@ -139,7 +139,7 @@ export default function AdminDashboard() {
   { client: "Lycée Melkior-Garré", service: "Dépannage réseau", date: "22 Avr 2026", technician: "Jean-Marc" },
 ]
 
-const recentQuotes = data?.recentDevis.map(devis => ({
+const recentQuotes = data?.recentDevis?.map(devis => ({
     id: devis.reference,
     client: devis.clientName,
     company: devis.company,
@@ -150,7 +150,7 @@ const recentQuotes = data?.recentDevis.map(devis => ({
     amount: formatAmount(devis.estimatedAmount),
   })) || []
 
-  const topServices = data?.topServices.map(s => ({
+  const topServices = data?.topServices?.map(s => ({
     name: s.serviceName,
     count: s.count,
     percentage: s.percentage || 0,
@@ -226,7 +226,7 @@ const recentQuotes = data?.recentDevis.map(devis => ({
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentQuotes.map((quote) => (
+              {(recentQuotes || []).map((quote) => (
                 <div
                   key={quote.id}
                   className="flex items-center gap-4 rounded-lg border border-border p-4 transition-colors hover:bg-muted/50"
@@ -292,7 +292,7 @@ const recentQuotes = data?.recentDevis.map(devis => ({
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {topServices.map((service) => (
+                {(topServices || []).map((service) => (
                   <div key={service.name}>
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm text-foreground">{service.name}</span>
