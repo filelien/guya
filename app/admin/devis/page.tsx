@@ -62,6 +62,15 @@ interface DevisWithDetails extends Devis {
   // Additional fields specific to detail view
 }
 
+const SERVICE_LABELS: Record<string, string> = {
+  "etudes": "Études & Ingénierie",
+  "deploiement": "Déploiement Réseau",
+  "raccordement": "Raccordement Client",
+  "maintenance": "Maintenance & Dépannage",
+  "audit": "Audit de réseau",
+  "entreprises": "Solutions Entreprises",
+}
+
 const statusConfig: Record<string, { label: string; icon: typeof Clock; color: string; textColor: string }> = {
   new: { label: "Nouveau", icon: AlertCircle, color: "bg-blue-500", textColor: "text-blue-500" },
   pending: { label: "En attente", icon: Clock, color: "bg-amber-500", textColor: "text-amber-500" },
@@ -306,24 +315,29 @@ export default function AdminDevisPage() {
 
       {/* Detail Dialog */}
       <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 gap-0">
           {selectedQuote && (
             <>
-              <DialogHeader>
-                <div className="flex items-center justify-between">
-                  <DialogTitle className="font-display text-xl">
-                    Prise de contact {selectedQuote.reference}
-                  </DialogTitle>
-                  <Badge variant="secondary" className={statusConfig[selectedQuote.status as keyof typeof statusConfig]?.textColor || "text-muted-foreground"}>
-                    {statusConfig[selectedQuote.status as keyof typeof statusConfig]?.label || selectedQuote.status}
-                  </Badge>
-                </div>
-                <DialogDescription>
-                  Reçu le {formatDate(selectedQuote.createdAt)}
-                </DialogDescription>
-              </DialogHeader>
+              {/* Fixed Header */}
+              <div className="px-6 pt-6 pb-4 border-b border-border shrink-0">
+                <DialogHeader>
+                  <div className="flex items-center justify-between">
+                    <DialogTitle className="font-display text-xl">
+                      Prise de contact {selectedQuote.reference}
+                    </DialogTitle>
+                    <Badge variant="secondary" className={statusConfig[selectedQuote.status as keyof typeof statusConfig]?.textColor || "text-muted-foreground"}>
+                      {statusConfig[selectedQuote.status as keyof typeof statusConfig]?.label || selectedQuote.status}
+                    </Badge>
+                  </div>
+                  <DialogDescription>
+                    Reçu le {formatDate(selectedQuote.createdAt)}
+                  </DialogDescription>
+                </DialogHeader>
+              </div>
 
-              <div className="space-y-6">
+              {/* Scrollable Content */}
+              <div className="flex-1 overflow-y-auto px-6 py-4">
+                <div className="space-y-4">
                 {/* Client Info */}
                 <div className="grid gap-4 md:grid-cols-2">
                   <Card>
@@ -370,6 +384,9 @@ export default function AdminDevisPage() {
                   </CardHeader>
                   <CardContent>
                     <p>{selectedQuote.address || selectedQuote.location}</p>
+                    {selectedQuote.postalCode && selectedQuote.city && (
+                      <p className="text-sm text-muted-foreground mt-1">{selectedQuote.postalCode} — {selectedQuote.city}</p>
+                    )}
                   </CardContent>
                 </Card>
 
@@ -380,7 +397,11 @@ export default function AdminDevisPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline">{selectedQuote.services?.[0] || '-'}</Badge>
+                      {(selectedQuote.services || []).map((s: string) => (
+                        <Badge key={s} variant="outline">
+                          {SERVICE_LABELS[s] || s}
+                        </Badge>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>
@@ -396,10 +417,9 @@ export default function AdminDevisPage() {
                 </Card>
 
                 {/* Amount */}
-                {/* Amount */}
                 <div className="flex items-center justify-between rounded-lg bg-muted p-4">
                   <span className="font-medium">Montant estimé</span>
-                  <span className="text-2xl font-bold text-primary">{selectedQuote.amount ? formatAmount(parseFloat(selectedQuote.amount)) : '-'}</span>
+                  <span className="text-2xl font-bold text-primary">{selectedQuote.amount ? formatAmount(parseFloat(selectedQuote.amount)) : '—'}</span>
                 </div>
 
                 {/* Status Change */}
@@ -415,12 +435,13 @@ export default function AdminDevisPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="new">Nouveau</SelectItem>
-                      <SelectItem value="pending">En attente</SelectItem>
-                      <SelectItem value="in-progress">En cours</SelectItem>
-                      <SelectItem value="accepted">Accepté</SelectItem>
-                      <SelectItem value="rejected">Refusé</SelectItem>
-                      <SelectItem value="completed">Terminé</SelectItem>
+                      <SelectItem value="NEW">Nouveau</SelectItem>
+                      <SelectItem value="PENDING">En attente</SelectItem>
+                      <SelectItem value="IN_PROGRESS">En cours</SelectItem>
+                      <SelectItem value="QUOTE_SENT">Devis envoyé</SelectItem>
+                      <SelectItem value="ACCEPTED">Accepté</SelectItem>
+                      <SelectItem value="REJECTED">Refusé</SelectItem>
+                      <SelectItem value="CANCELLED">Annulé</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -435,21 +456,25 @@ export default function AdminDevisPage() {
                     rows={3}
                   />
                 </div>
+                </div>
               </div>
 
-              <DialogFooter className="gap-2">
-                <Button variant="outline" onClick={() => setDetailOpen(false)}>
-                  Fermer
-                </Button>
-                <Button variant="outline">
-                  <FileText className="mr-2 h-4 w-4" />
-                  Générer PDF
-                </Button>
-                <Button>
-                  <Mail className="mr-2 h-4 w-4" />
-                  Envoyer réponse
-                </Button>
-              </DialogFooter>
+              {/* Fixed Footer */}
+              <div className="px-6 py-4 border-t border-border shrink-0">
+                <DialogFooter className="gap-2">
+                  <Button variant="outline" onClick={() => setDetailOpen(false)}>
+                    Fermer
+                  </Button>
+                  <Button variant="outline">
+                    <FileText className="mr-2 h-4 w-4" />
+                    Générer PDF
+                  </Button>
+                  <Button>
+                    <Mail className="mr-2 h-4 w-4" />
+                    Envoyer réponse
+                  </Button>
+                </DialogFooter>
+              </div>
             </>
           )}
         </DialogContent>
