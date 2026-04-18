@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { type ChangeEvent, useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -231,7 +231,7 @@ export default function AdminEmailsPage() {
                 <Label>Sujet</Label>
                 <Input
                   value={editingTemplate.subject}
-                  onChange={(e) => setEditingTemplate({ ...editingTemplate, subject: e.target.value })}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => setEditingTemplate({ ...editingTemplate, subject: e.target.value })}
                   placeholder="Objet de l'email..."
                 />
               </div>
@@ -240,7 +240,7 @@ export default function AdminEmailsPage() {
                 <Label>Corps HTML</Label>
                 <Textarea
                   value={editingTemplate.bodyHtml}
-                  onChange={(e) => setEditingTemplate({ ...editingTemplate, bodyHtml: e.target.value })}
+                  onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setEditingTemplate({ ...editingTemplate, bodyHtml: e.target.value })}
                   placeholder="<h1>Bonjour {{name}}</h1>..."
                   rows={12}
                   className="font-mono text-sm"
@@ -251,7 +251,7 @@ export default function AdminEmailsPage() {
                 <Label>Texte alternatif (plain text)</Label>
                 <Textarea
                   value={editingTemplate.bodyText}
-                  onChange={(e) => setEditingTemplate({ ...editingTemplate, bodyText: e.target.value })}
+                  onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setEditingTemplate({ ...editingTemplate, bodyText: e.target.value })}
                   placeholder="Bonjour {{name}}, ..."
                   rows={6}
                   className="font-mono text-sm"
@@ -287,7 +287,7 @@ export default function AdminEmailsPage() {
               <Input
                 type="email"
                 value={testEmail}
-                onChange={(e) => setTestEmail(e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setTestEmail(e.target.value)}
                 placeholder="test@exemple.com"
               />
             </div>
