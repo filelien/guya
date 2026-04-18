@@ -45,7 +45,6 @@ export default async function AppleIcon() {
             src={`data:image/jpeg;base64,${logoBase64}`}
             style={{
               position: 'relative',
-              zIndex: 10,
               width: '85%',
               height: '85%',
               objectFit: 'contain',
@@ -88,7 +87,6 @@ export default async function AppleIcon() {
           <div
             style={{
               position: 'relative',
-              zIndex: 10,
               fontSize: '42px',
               fontWeight: 'bold',
               color: 'white',

@@ -43,7 +43,6 @@ export default async function Icon() {
             src={`data:image/jpeg;base64,${logoBase64}`}
             style={{
               position: 'relative',
-              zIndex: 10,
               width: '85%',
               height: '85%',
               objectFit: 'contain',
@@ -83,7 +82,6 @@ export default async function Icon() {
           <div
             style={{
               position: 'relative',
-              zIndex: 10,
               fontSize: '48px',
               fontWeight: 'bold',
               color: 'white',

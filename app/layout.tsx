@@ -78,6 +78,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://guyafibre.com',
   },
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
     { media: '(prefers-color-scheme: dark)', color: '#000000' },
@@ -92,9 +98,6 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${spaceGrotesk.variable} ${plusJakartaSans.variable}`} suppressHydrationWarning>
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
-        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/icon" type="image/png" />
         <link rel="apple-touch-icon" href="/apple-icon" />
