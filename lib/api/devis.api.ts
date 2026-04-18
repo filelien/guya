@@ -11,6 +11,7 @@ export interface Devis {
   location: string;
   address?: string;
   postalCode?: string;
+  city?: string;
   description: string;
   urgency: 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';
   status: 'NEW' | 'PENDING' | 'IN_PROGRESS' | 'QUOTE_SENT' | 'ACCEPTED' | 'REJECTED' | 'CANCELLED';
