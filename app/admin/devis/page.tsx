@@ -1,484 +1,779 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState, useRef } from "react"
+import { Navbar } from "@/components/navbar"
+import { Footer } from "@/components/footer"
+import { WhatsAppButton } from "@/components/whatsapp-button"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
-import {
-  Search,
-  Filter,
-  Download,
-  Eye,
-  Mail,
-  Phone,
-  FileText,
-  MoreHorizontal,
+import { Card, CardContent } from "@/components/ui/card"
+import { PhoneInput } from "@/components/ui/phone-input"
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
+import { 
+  FileText, 
+  Send, 
+  CheckCircle2, 
+  Building2, 
+  User, 
+  Phone, 
+  Mail, 
   MapPin,
-  Calendar,
-  User,
-  Building2,
-  CheckCircle2,
+  FileDown,
   Clock,
-  AlertCircle,
-  XCircle,
-  Loader2,
+  Shield,
+  Zap,
+  Award,
+  ArrowRight,
+  Calendar,
+  Upload,
+  X,
+  Sparkles
 } from "lucide-react"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import devisApi, { Devis } from "@/lib/api/devis.api"
 import { toast } from "sonner"
+import { devisApi, CreateDevisRequest } from "@/lib/api/devis.api"
 
-interface DevisWithDetails extends Devis {
-  // Additional fields specific to detail view
-}
+const serviceOptions = [
+  { id: "etudes", label: "Études techniques & Conception", icon: "📐" },
+  { id: "deploiement", label: "Déploiement fibre optique", icon: "🔌" },
+  { id: "raccordement", label: "Raccordement client (FTTH/FTTO)", icon: "🏠" },
+  { id: "maintenance", label: "Maintenance & SAV", icon: "🔧" },
+  { id: "audit", label: "Audit de réseau", icon: "🔍" },
+  { id: "formation", label: "Formation technique", icon: "📚" },
+]
 
-const SERVICE_LABELS: Record<string, string> = {
-  "etudes": "Études & Ingénierie",
-  "deploiement": "Déploiement Réseau",
-  "raccordement": "Raccordement Client",
-  "maintenance": "Maintenance & Dépannage",
-  "audit": "Audit de réseau",
-  "entreprises": "Solutions Entreprises",
-}
+const projectTypes = [
+  { value: "particulier", label: "Particulier", icon: "🏠" },
+  { value: "entreprise", label: "Entreprise", icon: "🏢" },
+  { value: "collectivite", label: "Collectivité", icon: "🏛️" },
+  { value: "operateur", label: "Opérateur télécom", icon: "📡" },
+]
 
-const statusConfig: Record<string, { label: string; icon: typeof Clock; color: string; textColor: string }> = {
-  new: { label: "Nouveau", icon: AlertCircle, color: "bg-blue-500", textColor: "text-blue-500" },
-  pending: { label: "En attente", icon: Clock, color: "bg-amber-500", textColor: "text-amber-500" },
-  "in-progress": { label: "En cours", icon: Clock, color: "bg-violet-500", textColor: "text-violet-500" },
-  in_progress: { label: "En cours", icon: Clock, color: "bg-violet-500", textColor: "text-violet-500" },
-  completed: { label: "Terminé", icon: CheckCircle2, color: "bg-emerald-500", textColor: "text-emerald-500" },
-  accepted: { label: "Accepté", icon: CheckCircle2, color: "bg-emerald-500", textColor: "text-emerald-500" },
-  rejected: { label: "Refusé", icon: XCircle, color: "bg-red-500", textColor: "text-red-500" },
-  // Uppercase variants from backend
-  NEW: { label: "Nouveau", icon: AlertCircle, color: "bg-blue-500", textColor: "text-blue-500" },
-  PENDING: { label: "En attente", icon: Clock, color: "bg-amber-500", textColor: "text-amber-500" },
-  IN_PROGRESS: { label: "En cours", icon: Clock, color: "bg-violet-500", textColor: "text-violet-500" },
-  COMPLETED: { label: "Terminé", icon: CheckCircle2, color: "bg-emerald-500", textColor: "text-emerald-500" },
-  ACCEPTED: { label: "Accepté", icon: CheckCircle2, color: "bg-emerald-500", textColor: "text-emerald-500" },
-  REJECTED: { label: "Refusé", icon: XCircle, color: "bg-red-500", textColor: "text-red-500" },
-  QUOTE_SENT: { label: "Devis envoyé", icon: FileText, color: "bg-cyan-500", textColor: "text-cyan-500" },
-  CANCELLED: { label: "Annulé", icon: XCircle, color: "bg-gray-500", textColor: "text-gray-500" },
-}
+const urgencyOptions = [
+  { value: "normal", label: "Normal (sous 48h)", color: "bg-green-500/20 text-green-400" },
+  { value: "urgent", label: "Urgent (sous 24h)", color: "bg-yellow-500/20 text-yellow-400" },
+  { value: "tres-urgent", label: "Très urgent (sous 12h)", color: "bg-red-500/20 text-red-400" },
+]
 
-function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
+const steps = [
+  { id: 1, title: "Informations", icon: User },
+  { id: 2, title: "Projet", icon: Building2 },
+  { id: 3, title: "Services", icon: Zap },
+  { id: 4, title: "Détails", icon: FileText },
+]
+
+export default function DevisPage() {
+  const [currentStep, setCurrentStep] = useState(1)
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    countryCode: "+594",
+    company: "",
+    projectType: "",
+    address: "",
+    postalCode: "",
+    city: "",
+    services: [] as string[],
+    urgency: "normal",
+    preferredDate: "",
+    description: "",
+    attachments: [] as File[],
+    acceptTerms: false,
+    newsletter: false,
   })
-}
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
-function formatAmount(amount: number): string {
-  return new Intl.NumberFormat("fr-FR", {
-    style: "currency",
-    currency: "EUR",
-    minimumFractionDigits: 0,
-  }).format(amount)
-}
+  const handleServiceToggle = (serviceId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      services: prev.services.includes(serviceId)
+        ? prev.services.filter(s => s !== serviceId)
+        : [...prev.services, serviceId]
+    }))
+  }
 
-export default function AdminDevisPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [selectedQuote, setSelectedQuote] = useState<DevisWithDetails | null>(null)
-  const [detailOpen, setDetailOpen] = useState(false)
-  const [devis, setDevis] = useState<Devis[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    setFormData(prev => ({
+      ...prev,
+      attachments: [...prev.attachments, ...files].slice(0, 5)
+    }))
+  }
 
-  useEffect(() => {
-    const fetchDevis = async () => {
-      try {
-        const response = await devisApi.findAll()
-        setDevis(response?.data || (Array.isArray(response) ? response : []))
-      } catch (error) {
-        console.error("Failed to fetch devis:", error)
-        toast.error("Erreur lors du chargement des devis")
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    fetchDevis()
-  }, [])
+  const removeFile = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      attachments: prev.attachments.filter((_, i) => i !== index)
+    }))
+  }
 
-  const handleStatusChange = async (devisId: string, newStatus: string) => {
-    try {
-      await devisApi.updateStatus(devisId, { status: newStatus })
-      setDevis(devis.map(d => d.id === devisId ? { ...d, status: newStatus as Devis['status'] } : d))
-      toast.success("Statut mis à jour")
-    } catch (error) {
-      toast.error("Erreur lors de la mise à jour du statut")
+  const canProceed = () => {
+    switch (currentStep) {
+      case 1:
+        return formData.firstName && formData.lastName && formData.email && formData.phone
+      case 2:
+        return formData.projectType && formData.address && formData.postalCode && formData.city
+      case 3:
+        return formData.services.length > 0
+      case 4:
+        return formData.description && formData.acceptTerms
+      default:
+        return false
     }
   }
 
-  const filteredQuotes = devis.filter((quote) => {
-    const matchesSearch = 
-      quote.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      quote.reference.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (quote.services || []).join(' ').toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === "all" || quote.status === statusFilter
-    return matchesSearch && matchesStatus
-  })
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (currentStep < 4) {
+      setCurrentStep(currentStep + 1)
+      return
+    }
+    
+    setIsSubmitting(true)
+    
+    try {
+      const submitData: CreateDevisRequest = {
+        clientName: `${formData.firstName} ${formData.lastName}`,
+        clientEmail: formData.email,
+        clientPhone: `${formData.countryCode} ${formData.phone}`,
+        company: formData.company || undefined,
+        services: formData.services,
+        location: formData.city,
+        address: formData.address,
+        postalCode: formData.postalCode,
+        description: formData.description,
+        urgency: (formData.urgency === 'tres-urgent' ? 'HIGH' : formData.urgency.toUpperCase()) as 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT',
+      }
+      
+      await devisApi.create(submitData)
+      setIsSubmitted(true)
+    } catch (error: any) {
+      const message = error.response?.data?.message || "Une erreur est survenue lors de l'envoi de votre demande. Veuillez réessayer."
+      toast.error(message)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
-  const openDetail = (quote: Devis) => {
-    setSelectedQuote(quote as DevisWithDetails)
-    setDetailOpen(true)
+  if (isSubmitted) {
+    return (
+      <>
+        <Navbar />
+        <main className="min-h-screen bg-background pt-24 pb-20">
+          <div className="container-wide px-4 md:px-8">
+            <Card className="max-w-2xl mx-auto bg-card border-border overflow-hidden">
+              {/* Animated top border */}
+              <div className="h-1 animated-border" />
+              <CardContent className="p-12 text-center">
+                <div className="relative w-24 h-24 mx-auto mb-8">
+                  <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
+                  <div className="relative w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center">
+                    <CheckCircle2 className="w-12 h-12 text-primary" />
+                  </div>
+                </div>
+                <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
+                  Prise de contact envoyée avec succès !
+                </h1>
+                <p className="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed max-w-md mx-auto">
+                  Merci pour votre prise de contact. Notre équipe va l&apos;analyser et vous 
+                  recontactera dans les plus brefs délais. Un récapitulatif a été envoyé 
+                  à votre adresse email.
+                </p>
+                
+                {/* Reference number */}
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 mb-8">
+                  <span className="text-sm text-slate-600 dark:text-slate-400">Référence:</span>
+                  <span className="font-mono font-bold text-primary">GF-2026-{Math.random().toString(36).substring(2, 8).toUpperCase()}</span>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button 
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                    onClick={() => window.location.href = "/"}
+                  >
+                    Retour à l&apos;accueil
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="border-primary text-primary hover:bg-primary/10"
+                  >
+                    <FileDown className="w-4 h-4 mr-2" />
+                    Télécharger le récapitulatif
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+        <Footer />
+        <WhatsAppButton />
+      </>
+    )
   }
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-foreground md:text-3xl">
-            Prises de contact
-          </h1>
-          <p className="text-muted-foreground">
-            Gérez toutes les prises de contact reçues
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Download className="mr-2 h-4 w-4" />
-            Exporter
-          </Button>
-        </div>
-      </div>
-
-      {/* Stats Cards */}
-      {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      ) : (
-      <div className="grid gap-4 md:grid-cols-4">
-        {[
-          { label: "Total", value: devis.length, color: "bg-primary" },
-          { label: "Nouveaux", value: devis.filter(q => q.status === "NEW").length, color: "bg-blue-500" },
-          { label: "En cours", value: devis.filter(q => q.status === "IN_PROGRESS" || q.status === "PENDING").length, color: "bg-violet-500" },
-          { label: "Terminés", value: devis.filter(q => q.status === "QUOTE_SENT" || q.status === "ACCEPTED").length, color: "bg-emerald-500" },
-        ].map((stat) => (
-          <Card key={stat.label}>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className={`h-3 w-3 rounded-full ${stat.color}`} />
-                <div>
-                  <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                  <p className="text-sm text-muted-foreground">{stat.label}</p>
-                </div>
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-background">
+        {/* Header with gradient */}
+        <section className="relative pt-32 pb-16 px-4 md:px-8 overflow-hidden">
+          {/* Background effects */}
+          <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
+          <div className="absolute top-20 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+          <div className="absolute top-40 right-1/4 w-64 h-64 bg-accent/10 rounded-full blur-3xl" />
+          
+          <div className="container-wide relative">
+            <div className="max-w-3xl mx-auto text-center">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 mb-6 animate-pulse-glow">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <span className="text-primary text-sm font-medium">Demande de prise de contact</span>
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>)}
-
-      {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Rechercher par client, ID ou service..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <div className="flex gap-2">
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[180px]">
-                  <Filter className="mr-2 h-4 w-4" />
-                  <SelectValue placeholder="Filtrer par statut" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tous les statuts</SelectItem>
-                  <SelectItem value="new">Nouveau</SelectItem>
-                  <SelectItem value="pending">En attente</SelectItem>
-                  <SelectItem value="in-progress">En cours</SelectItem>
-                  <SelectItem value="completed">Terminé</SelectItem>
-                </SelectContent>
-              </Select>
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 text-balance">
+                Prenez contact avec notre équipe
+              </h1>
+              <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed max-w-2xl mx-auto">
+                Remplissez le formulaire ci-dessous et notre équipe vous recontactera 
+                sous 24 à 48 heures. Notre équipe d&apos;experts analysera votre projet.
+              </p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </section>
 
-      {/* Table */}
-      <Card>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Client</TableHead>
-                <TableHead>Service</TableHead>
-                <TableHead>Localisation</TableHead>
-                <TableHead>Montant</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredQuotes.map((quote) => {
-                const status = statusConfig[quote.status as keyof typeof statusConfig] || statusConfig.new
-                return (
-                  <TableRow key={quote.id} className="cursor-pointer hover:bg-muted/50" onClick={() => openDetail(quote)}>
-                    <TableCell className="font-medium">{quote.reference}</TableCell>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{quote.clientName}</p>
-                        {quote.company && (
-                          <p className="text-xs text-muted-foreground">{quote.company}</p>
+        {/* Progress Steps */}
+        <section className="px-4 md:px-8 pb-8">
+          <div className="container-wide">
+            <div className="max-w-3xl mx-auto">
+              <div className="flex items-center justify-between relative">
+                {/* Progress line */}
+                <div className="absolute top-5 left-0 right-0 h-0.5 bg-border">
+                  <div 
+                    className="h-full bg-primary transition-all duration-500"
+                    style={{ width: `${((currentStep - 1) / 3) * 100}%` }}
+                  />
+                </div>
+                
+                {steps.map((step) => {
+                  const Icon = step.icon
+                  const isActive = step.id === currentStep
+                  const isCompleted = step.id < currentStep
+                  
+                  return (
+                    <button
+                      key={step.id}
+                      onClick={() => step.id < currentStep && setCurrentStep(step.id)}
+                      disabled={step.id > currentStep}
+                      className={`relative flex flex-col items-center gap-2 transition-all ${
+                        step.id <= currentStep ? "cursor-pointer" : "cursor-not-allowed opacity-50"
+                      }`}
+                    >
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                        isActive 
+                          ? "bg-primary text-primary-foreground scale-110 shadow-lg shadow-primary/30" 
+                          : isCompleted 
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+                      }`}>
+                        {isCompleted ? (
+                          <CheckCircle2 className="w-5 h-5" />
+                        ) : (
+                          <Icon className="w-5 h-5" />
                         )}
                       </div>
-                    </TableCell>
-                    <TableCell>{quote.services?.[0] || '-'}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <MapPin className="h-3 w-3 text-muted-foreground" />
-                        {quote.location}
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-semibold">{quote.amount ? formatAmount(parseFloat(quote.amount)) : '-'}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className={`${status.textColor}`}>
-                        <status.icon className="mr-1 h-3 w-3" />
-                        {status.label}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">{formatDate(quote.createdAt)}</TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => openDetail(quote)}>
-                            <Eye className="mr-2 h-4 w-4" />
-                            Voir détails
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Mail className="mr-2 h-4 w-4" />
-                            Envoyer email
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Phone className="mr-2 h-4 w-4" />
-                            Appeler
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem>
-                            <FileText className="mr-2 h-4 w-4" />
-                            Générer PDF
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                      <span className={`text-xs font-medium hidden sm:block ${
+                        isActive ? "text-primary" : "text-slate-600 dark:text-slate-400"
+                      }`}>
+                        {step.title}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
 
-      {/* Detail Dialog */}
-      <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 gap-0">
-          {selectedQuote && (
-            <>
-              {/* Fixed Header */}
-              <div className="px-6 pt-6 pb-4 border-b border-border shrink-0">
-                <DialogHeader>
-                  <div className="flex items-center justify-between">
-                    <DialogTitle className="font-display text-xl">
-                      Prise de contact {selectedQuote.reference}
-                    </DialogTitle>
-                    <Badge variant="secondary" className={statusConfig[selectedQuote.status as keyof typeof statusConfig]?.textColor || "text-muted-foreground"}>
-                      {statusConfig[selectedQuote.status as keyof typeof statusConfig]?.label || selectedQuote.status}
-                    </Badge>
+        {/* Form Section */}
+        <section className="pb-20 px-4 md:px-8">
+          <div className="container-wide">
+            <div className="grid lg:grid-cols-3 gap-8">
+              {/* Form */}
+              <div className="lg:col-span-2">
+                <Card className="bg-card border-border overflow-hidden">
+                  {/* Step indicator bar */}
+                  <div className="h-1 bg-slate-100 dark:bg-slate-800">
+                    <div 
+                      className="h-full bg-primary transition-all duration-500"
+                      style={{ width: `${(currentStep / 4) * 100}%` }}
+                    />
                   </div>
-                  <DialogDescription>
-                    Reçu le {formatDate(selectedQuote.createdAt)}
-                  </DialogDescription>
-                </DialogHeader>
+                  
+                  <CardContent className="p-6 md:p-8">
+                    <form onSubmit={handleSubmit} className="space-y-8">
+                      
+                      {/* Step 1: Personal Info */}
+                      {currentStep === 1 && (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                          <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                              <User className="w-5 h-5 text-primary" />
+                            </div>
+                            <div>
+                              <h3 className="font-display text-xl font-semibold text-foreground">
+                                Informations personnelles
+                              </h3>
+                              <p className="text-sm text-slate-600 dark:text-slate-400">Dites-nous qui vous êtes</p>
+                            </div>
+                          </div>
+                          
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <label className="block text-sm font-medium text-foreground">Prénom *</label>
+                              <Input 
+                                required
+                                value={formData.firstName}
+                                onChange={e => setFormData({...formData, firstName: e.target.value})}
+                                className="bg-background border-input"
+                                placeholder="Votre prénom"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="block text-sm font-medium text-foreground">Nom *</label>
+                              <Input 
+                                required
+                                value={formData.lastName}
+                                onChange={e => setFormData({...formData, lastName: e.target.value})}
+                                className="bg-background border-input"
+                                placeholder="Votre nom"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="block text-sm font-medium text-foreground flex items-center gap-2">
+                                <Mail className="w-4 h-4 text-primary" /> Email *
+                              </label>
+                              <Input 
+                                type="email"
+                                required
+                                value={formData.email}
+                                onChange={e => setFormData({...formData, email: e.target.value})}
+                                className="bg-background border-input"
+                                placeholder="votre@email.com"
+                              />
+                            </div>
+                            <div className="md:col-span-2 space-y-2">
+                              <label className="block text-sm font-medium text-foreground flex items-center gap-2">
+                                <Phone className="w-4 h-4 text-primary" /> Téléphone *
+                              </label>
+                              <PhoneInput
+                                required
+                                value={formData.phone}
+                                onChange={e => setFormData({...formData, phone: e.target.value})}
+                                countryCode={formData.countryCode}
+                                onCountryCodeChange={code => setFormData({...formData, countryCode: code})}
+                                placeholder="6 94 00 00 00"
+                              />
+                            </div>
+                            <div className="md:col-span-2 space-y-2">
+                              <label className="block text-sm font-medium text-foreground">
+                                Entreprise (optionnel)
+                              </label>
+                              <Input 
+                                value={formData.company}
+                                onChange={e => setFormData({...formData, company: e.target.value})}
+                                className="bg-background border-input"
+                                placeholder="Nom de votre entreprise"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Step 2: Project Info */}
+                      {currentStep === 2 && (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                          <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                              <Building2 className="w-5 h-5 text-primary" />
+                            </div>
+                            <div>
+                              <h3 className="font-display text-xl font-semibold text-foreground">
+                                Informations projet
+                              </h3>
+                              <p className="text-sm text-slate-600 dark:text-slate-400">Parlez-nous de votre projet</p>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-4">
+                            <label className="block text-sm font-medium text-foreground">Type de projet *</label>
+                            <div className="grid grid-cols-2 gap-3">
+                              {projectTypes.map(type => (
+                                <button
+                                  key={type.value}
+                                  type="button"
+                                  onClick={() => setFormData({...formData, projectType: type.value})}
+                                  className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
+                                    formData.projectType === type.value
+                                      ? "border-primary bg-primary/10"
+                                      : "border-border hover:border-primary/50"
+                                  }`}
+                                >
+                                  <span className="text-2xl">{type.icon}</span>
+                                  <span className="font-medium text-foreground">{type.label}</span>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div className="md:col-span-2 space-y-2">
+                              <label className="block text-sm font-medium text-foreground flex items-center gap-2">
+                                <MapPin className="w-4 h-4 text-primary" /> Adresse d&apos;intervention *
+                              </label>
+                              <Input 
+                                required
+                                value={formData.address}
+                                onChange={e => setFormData({...formData, address: e.target.value})}
+                                className="bg-background border-input"
+                                placeholder="Adresse complète"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="block text-sm font-medium text-foreground">Boîte postale *</label>
+                              <Input 
+                                required
+                                value={formData.postalCode}
+                                onChange={e => setFormData({...formData, postalCode: e.target.value})}
+                                className="bg-background border-input"
+                                placeholder="BP 1234"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="block text-sm font-medium text-foreground">Ville *</label>
+                              <Input 
+                                required
+                                value={formData.city}
+                                onChange={e => setFormData({...formData, city: e.target.value})}
+                                className="bg-background border-input"
+                                placeholder="Ex: Cayenne, Kourou..."
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="block text-sm font-medium text-foreground flex items-center gap-2">
+                                <Calendar className="w-4 h-4 text-primary" /> Date souhaitée
+                              </label>
+                              <Input 
+                                type="date"
+                                value={formData.preferredDate}
+                                onChange={e => setFormData({...formData, preferredDate: e.target.value})}
+                                className="bg-background border-input"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Step 3: Services */}
+                      {currentStep === 3 && (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                          <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                              <Zap className="w-5 h-5 text-primary" />
+                            </div>
+                            <div>
+                              <h3 className="font-display text-xl font-semibold text-foreground">
+                                Services demandés
+                              </h3>
+                              <p className="text-sm text-slate-600 dark:text-slate-400">Sélectionnez les services dont vous avez besoin</p>
+                            </div>
+                          </div>
+                          
+                          <div className="grid md:grid-cols-2 gap-3">
+                            {serviceOptions.map(service => (
+                              <button
+                                key={service.id}
+                                type="button"
+                                onClick={() => handleServiceToggle(service.id)}
+                                className={`flex items-center gap-4 p-4 rounded-xl border-2 text-left transition-all ${
+                                  formData.services.includes(service.id)
+                                    ? "border-primary bg-primary/10"
+                                    : "border-border hover:border-primary/50"
+                                }`}
+                              >
+                                <span className="text-2xl">{service.icon}</span>
+                                <span className="font-medium text-foreground flex-1">{service.label}</span>
+                                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                                  formData.services.includes(service.id)
+                                    ? "border-primary bg-primary"
+                                    : "border-slate-300 dark:border-slate-600"
+                                }`}>
+                                  {formData.services.includes(service.id) && (
+                                    <CheckCircle2 className="w-3 h-3 text-primary-foreground" />
+                                  )}
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+
+                          {/* Urgency */}
+                          <div className="space-y-3 pt-4">
+                            <label className="block text-sm font-medium text-foreground flex items-center gap-2">
+                              <Clock className="w-4 h-4 text-primary" /> Niveau d&apos;urgence
+                            </label>
+                            <div className="flex flex-wrap gap-2">
+                              {urgencyOptions.map(opt => (
+                                <button
+                                  key={opt.value}
+                                  type="button"
+                                  onClick={() => setFormData({...formData, urgency: opt.value})}
+                                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                                    formData.urgency === opt.value
+                                      ? opt.color + " ring-2 ring-offset-2 ring-offset-background"
+                                      : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                  }`}
+                                >
+                                  {opt.label}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Step 4: Details */}
+                      {currentStep === 4 && (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                          <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                              <FileText className="w-5 h-5 text-primary" />
+                            </div>
+                            <div>
+                              <h3 className="font-display text-xl font-semibold text-foreground">
+                                Détails du projet
+                              </h3>
+                              <p className="text-sm text-slate-600 dark:text-slate-400">Décrivez votre besoin en détail</p>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <label className="block text-sm font-medium text-foreground">Description du projet *</label>
+                            <Textarea 
+                              required
+                              rows={6}
+                              value={formData.description}
+                              onChange={e => setFormData({...formData, description: e.target.value})}
+                              className="bg-background border-input resize-none"
+                              placeholder="Décrivez votre projet en détail : nombre de points de raccordement, longueur estimée, contraintes particulières..."
+                            />
+                          </div>
+
+                          {/* File upload */}
+                          <div className="space-y-3">
+                            <label className="block text-sm font-medium text-foreground">
+                              Pièces jointes (optionnel)
+                            </label>
+                            <div 
+                              onClick={() => fileInputRef.current?.click()}
+                              className="border-2 border-dashed border-border rounded-xl p-6 text-center cursor-pointer hover:border-primary/50 transition-colors"
+                            >
+                              <Upload className="w-8 h-8 text-slate-600 dark:text-slate-400 mx-auto mb-2" />
+                              <p className="text-sm text-slate-600 dark:text-slate-400">
+                                Cliquez pour ajouter des fichiers (plans, photos...)
+                              </p>
+                              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                PDF, JPG, PNG - Max 5 fichiers
+                              </p>
+                            </div>
+                            <input
+                              ref={fileInputRef}
+                              type="file"
+                              multiple
+                              accept=".pdf,.jpg,.jpeg,.png"
+                              onChange={handleFileUpload}
+                              className="hidden"
+                            />
+                            {formData.attachments.length > 0 && (
+                              <div className="flex flex-wrap gap-2">
+                                {formData.attachments.map((file, index) => (
+                                  <div key={index} className="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-sm">
+                                    <span className="truncate max-w-32">{file.name}</span>
+                                    <button type="button" onClick={() => removeFile(index)}>
+                                      <X className="w-4 h-4 text-slate-600 dark:text-slate-400 hover:text-destructive" />
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Terms */}
+                          <div className="space-y-3 pt-4">
+                            <label className="flex items-start gap-3 cursor-pointer">
+                              <Checkbox
+                                checked={formData.acceptTerms}
+                                onCheckedChange={(checked) => setFormData({...formData, acceptTerms: checked as boolean})}
+                                className="mt-1"
+                              />
+                              <span className="text-sm text-slate-600 dark:text-slate-400">
+                                J&apos;accepte que mes données soient utilisées pour traiter ma demande 
+                                conformément à la <a href="/mentions-legales" className="text-primary hover:underline">politique de confidentialité</a>. *
+                              </span>
+                            </label>
+                            <label className="flex items-start gap-3 cursor-pointer">
+                              <Checkbox
+                                checked={formData.newsletter}
+                                onCheckedChange={(checked) => setFormData({...formData, newsletter: checked as boolean})}
+                                className="mt-1"
+                              />
+                              <span className="text-sm text-slate-600 dark:text-slate-400">
+                                Je souhaite recevoir les actualités et offres de GUYA FIBRE
+                              </span>
+                            </label>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Navigation buttons */}
+                      <div className="flex items-center justify-between pt-6 border-t border-border">
+                        {currentStep > 1 ? (
+                          <Button 
+                            type="button"
+                            variant="outline"
+                            onClick={() => setCurrentStep(currentStep - 1)}
+                          >
+                            Retour
+                          </Button>
+                        ) : (
+                          <div />
+                        )}
+                        
+                        <Button 
+                          type="submit"
+                          disabled={!canProceed() || isSubmitting}
+                          className="bg-primary hover:bg-primary/90 text-primary-foreground min-w-40"
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin mr-2" />
+                              Envoi en cours...
+                            </>
+                          ) : currentStep < 4 ? (
+                            <>
+                              Continuer
+                              <ArrowRight className="w-4 h-4 ml-2" />
+                            </>
+                          ) : (
+                            <>
+                              <Send className="w-4 h-4 mr-2" />
+                              Envoyer ma demande
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </form>
+                  </CardContent>
+                </Card>
               </div>
 
-              {/* Scrollable Content */}
-              <div className="flex-1 overflow-y-auto px-6 py-4">
-                <div className="space-y-4">
-                {/* Client Info */}
-                <div className="grid gap-4 md:grid-cols-2">
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                        <User className="h-4 w-4" />
-                        Client
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="font-semibold">{selectedQuote.clientName}</p>
-                      {selectedQuote.company && (
-                        <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
-                          <Building2 className="h-3 w-3" />
-                          {selectedQuote.company}
-                        </p>
-                      )}
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-muted-foreground">Contact</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-1">
-                      <p className="text-sm flex items-center gap-2">
-                        <Mail className="h-3 w-3 text-muted-foreground" />
-                        {selectedQuote.clientEmail}
-                      </p>
-                      <p className="text-sm flex items-center gap-2">
-                        <Phone className="h-3 w-3 text-muted-foreground" />
-                        {selectedQuote.clientPhone}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Location */}
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
-                      Adresse d&apos;intervention
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p>{selectedQuote.address || selectedQuote.location}</p>
-                    {selectedQuote.postalCode && selectedQuote.city && (
-                      <p className="text-sm text-muted-foreground mt-1">{selectedQuote.postalCode} — {selectedQuote.city}</p>
-                    )}
+              {/* Sidebar */}
+              <div className="space-y-6">
+                {/* Why choose us */}
+                <Card className="bg-card border-border overflow-hidden">
+                  <div className="h-1 animated-border" />
+                  <CardContent className="p-6">
+                    <h3 className="font-display text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                      <Award className="w-5 h-5 text-primary" />
+                      Pourquoi GUYA FIBRE ?
+                    </h3>
+                    <ul className="space-y-3">
+                      {[
+                        { icon: Shield, text: "Prise de contact gratuite" },
+                        { icon: Clock, text: "Réponse garantie sous 24-48h" },
+                        { icon: Award, text: "Expertise locale certifiée" },
+                        { icon: CheckCircle2, text: "Techniciens certifiés FTTH" },
+                        { icon: MapPin, text: "Intervention sur toute la Guyane" },
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-center gap-3 text-slate-600 dark:text-slate-400 text-sm">
+                          <item.icon className="w-4 h-4 text-primary flex-shrink-0" />
+                          {item.text}
+                        </li>
+                      ))}
+                    </ul>
                   </CardContent>
                 </Card>
 
-                {/* Services */}
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">Services demandés</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap gap-2">
-                      {(selectedQuote.services || []).map((s: string) => (
-                        <Badge key={s} variant="outline">
-                          {SERVICE_LABELS[s] || s}
-                        </Badge>
-                      ))}
+                {/* Contact direct */}
+                <Card className="bg-card border-border">
+                  <CardContent className="p-6">
+                    <h3 className="font-display text-lg font-semibold text-foreground mb-4">
+                      Contact direct
+                    </h3>
+                    <div className="space-y-4">
+                      <a 
+                        href="tel:+594 694435484"
+                        className="flex items-center gap-3 p-3 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors"
+                      >
+                        <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                          <Phone className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                          <div className="text-xs text-slate-600 dark:text-slate-400">Guyane (+594)</div>
+                          <div className="font-semibold text-foreground"> +594 06 94 43 54 84</div>
+                        </div>
+                      </a>
+                      <a 
+                        href="mailto:contact@guyafibre.com"
+                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                      >
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <Mail className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                          <div className="text-xs text-slate-600 dark:text-slate-400">Email</div>
+                          <div className="font-medium text-foreground">contact@guyafibre.com</div>
+                        </div>
+                      </a>
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Description */}
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">Description du projet</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm leading-relaxed">{selectedQuote.description}</p>
-                  </CardContent>
-                </Card>
-
-                {/* Amount */}
-                <div className="flex items-center justify-between rounded-lg bg-muted p-4">
-                  <span className="font-medium">Montant estimé</span>
-                  <span className="text-2xl font-bold text-primary">{selectedQuote.amount ? formatAmount(parseFloat(selectedQuote.amount)) : '—'}</span>
-                </div>
-
-                {/* Status Change */}
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                    Changer le statut
-                  </label>
-                  <Select 
-                    value={selectedQuote.status} 
-                    onValueChange={(newStatus) => handleStatusChange(selectedQuote.id, newStatus)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="NEW">Nouveau</SelectItem>
-                      <SelectItem value="PENDING">En attente</SelectItem>
-                      <SelectItem value="IN_PROGRESS">En cours</SelectItem>
-                      <SelectItem value="QUOTE_SENT">Devis envoyé</SelectItem>
-                      <SelectItem value="ACCEPTED">Accepté</SelectItem>
-                      <SelectItem value="REJECTED">Refusé</SelectItem>
-                      <SelectItem value="CANCELLED">Annulé</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Response */}
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                    Réponse au client
-                  </label>
-                  <Textarea 
-                    placeholder="Écrivez votre réponse ici..."
-                    rows={3}
-                  />
-                </div>
-                </div>
+                {/* Summary card - shows selected services */}
+                {formData.services.length > 0 && (
+                  <Card className="bg-primary/5 border-primary/20">
+                    <CardContent className="p-6">
+                      <h3 className="font-display text-lg font-semibold text-foreground mb-4">
+                        Votre sélection
+                      </h3>
+                      <ul className="space-y-2">
+                        {formData.services.map(serviceId => {
+                          const service = serviceOptions.find(s => s.id === serviceId)
+                          return service ? (
+                          <li key={serviceId} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                              <span>{service.icon}</span>
+                              <span>{service.label}</span>
+                            </li>
+                          ) : null
+                        })}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
-
-              {/* Fixed Footer */}
-              <div className="px-6 py-4 border-t border-border shrink-0">
-                <DialogFooter className="gap-2">
-                  <Button variant="outline" onClick={() => setDetailOpen(false)}>
-                    Fermer
-                  </Button>
-                  <Button variant="outline">
-                    <FileText className="mr-2 h-4 w-4" />
-                    Générer PDF
-                  </Button>
-                  <Button>
-                    <Mail className="mr-2 h-4 w-4" />
-                    Envoyer réponse
-                  </Button>
-                </DialogFooter>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
+      <WhatsAppButton />
+    </>
   )
 }
