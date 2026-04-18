@@ -10,7 +10,6 @@ const nextConfig = {
     ],
   },
   // Enable optimized images by default
-  swcMinify: true,
   reactStrictMode: true,
 }
 
