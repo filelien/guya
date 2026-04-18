@@ -28,13 +28,13 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   icons: {
     icon: [
-      { url: '/icon', sizes: '192x192', type: 'image/png' },
-      { url: '/icon', sizes: 'any', type: 'image/png' },
+      { url: '/images/logo.jpg', sizes: '192x192', type: 'image/jpeg' },
+      { url: '/images/logo.jpg', sizes: 'any', type: 'image/jpeg' },
     ],
     apple: [
-      { url: '/apple-icon', sizes: '180x180', type: 'image/png' },
+      { url: '/images/logo.jpg', sizes: '180x180', type: 'image/jpeg' },
     ],
-    shortcut: ['/icon'],
+    shortcut: ['/images/logo.jpg'],
   },
   appleWebApp: {
     capable: true,
@@ -99,9 +99,9 @@ export default function RootLayout({
     <html lang="fr" className={`${spaceGrotesk.variable} ${plusJakartaSans.variable}`} suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/icon" type="image/png" />
-        <link rel="apple-touch-icon" href="/apple-icon" />
-        <link rel="shortcut icon" href="/icon" />
+        <link rel="icon" href="/images/logo.jpg" type="image/jpeg" />
+        <link rel="apple-touch-icon" href="/images/logo.jpg" />
+        <link rel="shortcut icon" href="/images/logo.jpg" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
