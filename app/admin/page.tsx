@@ -151,7 +151,7 @@ const recentQuotes = data?.recentDevis.map(devis => ({
   })) || []
 
   const topServices = data?.topServices.map(s => ({
-    name: s.serviceName || s.name,
+    name: s.serviceName,
     count: s.count,
     percentage: s.percentage || 0,
   })) || []
