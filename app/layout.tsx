@@ -7,6 +7,8 @@ import { ThemeCustomProvider } from '@/lib/theme-custom'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://guyafibre.com'
+
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-display',
@@ -20,7 +22,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://guyafibre.com'),
+  metadataBase: new URL(siteUrl),
   title: {
     default: 'GUYA FIBRE | Entreprise de référence en fibre optique en Guyane française (FTTH / FTTO)',
     template: '%s | GUYA FIBRE - Réseaux fibre optique en Guyane',
@@ -43,14 +45,9 @@ export const metadata: Metadata = {
   publisher: 'GUYA FIBRE',
   manifest: '/manifest.json',
   icons: {
-    icon: [
-      { url: '/images/logo.jpg', sizes: '192x192', type: 'image/jpeg' },
-      { url: '/images/logo.jpg', sizes: 'any', type: 'image/jpeg' },
-    ],
-    apple: [
-      { url: '/images/logo.jpg', sizes: '180x180', type: 'image/jpeg' },
-    ],
-    shortcut: ['/images/logo.jpg'],
+    icon: [{ url: '/icon', sizes: 'any' }],
+    apple: [{ url: '/apple-icon', sizes: '180x180' }],
+    shortcut: ['/icon'],
   },
   appleWebApp: {
     capable: true,
@@ -70,13 +67,13 @@ export const metadata: Metadata = {
     siteName: 'GUYA FIBRE',
     images: [
       {
-        url: 'https://guyafibre.com/images/hero-bg.jpg',
+        url: `${siteUrl}/images/hero-bg.jpg`,
         width: 1200,
         height: 630,
         alt: 'GUYA FIBRE - Technicien en intervention fibre optique',
       },
       {
-        url: 'https://guyafibre.com/images/logo.jpg',
+        url: `${siteUrl}/images/logo.jpg`,
         width: 1200,
         height: 630,
         alt: 'GUYA FIBRE Logo',
@@ -94,7 +91,7 @@ export const metadata: Metadata = {
     creator: '@guyafibre',
   },
   alternates: {
-    canonical: '/',
+    canonical: siteUrl,
   },
   robots: {
     index: true,
@@ -128,9 +125,9 @@ export default function RootLayout({
     <html lang="fr" className={`${spaceGrotesk.variable} ${plusJakartaSans.variable}`} suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/images/logo.jpg" type="image/jpeg" />
-        <link rel="apple-touch-icon" href="/images/logo.jpg" />
-        <link rel="shortcut icon" href="/images/logo.jpg" />
+        <link rel="icon" href="/icon" sizes="any" />
+        <link rel="apple-touch-icon" href="/apple-icon" />
+        <link rel="shortcut icon" href="/icon" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -140,7 +137,7 @@ export default function RootLayout({
               name: 'GUYA FIBRE',
               description:
                 'Entreprise guyanaise experte en ingénierie et déploiement fibre optique, GUYA FIBRE accompagne durablement les particuliers, entreprises et collectivités, de Cayenne aux zones isolées de l’intérieur.',
-              url: 'https://guyafibre.com',
+              url: siteUrl,
               telephone: '+594 694435484',
               email: 'contact@guyafibre.com',
               address: {
@@ -159,8 +156,8 @@ export default function RootLayout({
               openingHours: 'Mo-Fr 08:00-18:00, Sa 08:00-12:00',
               areaServed: 'Guyane française',
               sameAs: ['https://wa.me/594694435484'],
-              image: 'https://guyafibre.com/images/logo.jpg',
-              logo: 'https://guyafibre.com/images/logo.jpg',
+              image: `${siteUrl}/images/logo.jpg`,
+              logo: `${siteUrl}/images/logo.jpg`,
               priceRange: '$$',
             }),
           }}
