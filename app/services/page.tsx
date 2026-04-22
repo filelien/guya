@@ -10,6 +10,7 @@ import { CTABanner } from "@/components/cta-banner"
 import { CheckCircle2, ArrowRight, Loader2 } from "lucide-react"
 import { Compass, HardHat, Home, Zap, Server, Settings } from "lucide-react"
 import * as Icons from "lucide-react"
+import { useLanguage } from "@/lib/i18n/context"
 
 const ICON_MAP: Record<string, any> = {
   Compass,
@@ -24,6 +25,7 @@ const ICON_MAP: Record<string, any> = {
 }
 
 export default function ServicesPage() {
+  const { locale, t } = useLanguage()
   const [services, setServices] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -114,21 +116,128 @@ export default function ServicesPage() {
   }
 
   const displayServices = services.length > 0 ? services : getDefaultServices()
+  const pageText = {
+    fr: {
+      badge: "Nos prestations",
+      title: "Services fibre optique en Guyane",
+      subtitle: "De l'étude de faisabilité à la maintenance long terme, GUYA FIBRE couvre l'intégralité de la chaîne de valeur des réseaux fibre, avec une expertise unique adaptée au terrain guyanais.",
+    },
+    en: {
+      badge: "Our services",
+      title: "Fiber optic services in French Guiana",
+      subtitle: "From feasibility studies to long-term maintenance, GUYA FIBRE covers the full fiber value chain with local field expertise.",
+    },
+    es: {
+      badge: "Nuestros servicios",
+      title: "Servicios de fibra óptica en Guayana Francesa",
+      subtitle: "Desde el estudio de viabilidad hasta el mantenimiento, GUYA FIBRE cubre toda la cadena de valor de la fibra.",
+    },
+    pt: {
+      badge: "Nossos serviços",
+      title: "Serviços de fibra óptica na Guiana Francesa",
+      subtitle: "Da viabilidade à manutenção de longo prazo, a GUYA FIBRE cobre toda a cadeia de valor da fibra.",
+    },
+    nl: {
+      badge: "Onze diensten",
+      title: "Glasvezeldiensten in Frans-Guyana",
+      subtitle: "Van haalbaarheidsstudies tot langetermijnonderhoud, GUYA FIBRE dekt de volledige glasvezelketen.",
+    },
+    gcr: {
+      badge: "Sèrvis nou",
+      title: "Sèrvis fib optik an Lagwiyàn",
+      subtitle: "Dépi létid fèzabilité jis antrétyenn long tèm, GUYA FIBRE ka kouvè tout chenn valè fib-la.",
+    },
+    ar: {
+      badge: "خدماتنا",
+      title: "خدمات الألياف الضوئية في غويانا الفرنسية",
+      subtitle: "من دراسة الجدوى إلى الصيانة طويلة الأمد، تقدم GUYA FIBRE سلسلة خدمات ألياف متكاملة.",
+    },
+    zh: {
+      badge: "我们的服务",
+      title: "法属圭亚那光纤服务",
+      subtitle: "从可行性研究到长期运维，GUYA FIBRE 提供完整的光纤价值链服务。",
+    },
+  } as const
+  const text = pageText[locale as keyof typeof pageText] || pageText.fr
+  const localizedField = (service: any, base: string) => {
+    const suffix: Record<string, string> = { fr: "Fr", en: "En", es: "Es", pt: "Pt", nl: "Nl", gcr: "Gcr", ar: "Ar", zh: "Zh" }
+    const key = `${base}${suffix[locale] || "Fr"}`
+    return service[key] || service[`${base}Fr`] || service[base] || ""
+  }
+  const servicesByLocale: Record<string, Record<string, { title: string; desc: string; features: string[] }>> = {
+    en: {
+      etudes: { title: "Studies & Engineering", desc: "Before deployment, we perform full terrain, regulation and technical analysis to guarantee project feasibility.", features: ["FTTH / FTTO feasibility studies", "Network design", "GIS and mapping management", "Documented technical reports"] },
+      deploiement: { title: "Network Deployment", desc: "From civil works to optical connection, our teams handle full deployment with equipment adapted to local constraints.", features: ["Civil works and trenches", "Aerial networks", "Fiber pulling and splicing", "Distribution box installation"] },
+      raccordement: { title: "Customer Connection", desc: "From distribution point to end customer, we deliver a validated service activation with acceptance documentation.", features: ["Residential FTTH", "Business FTTO", "OTDR tests and measurements", "Connection support"] },
+      maintenance: { title: "Maintenance & Troubleshooting", desc: "Service continuity is ensured through preventive maintenance and rapid intervention capability.", features: ["Preventive maintenance", "Fault location", "24/7 on-call", "Maintenance contracts"] },
+      entreprises: { title: "Enterprise Solutions", desc: "We support public and private actors with digital infrastructure projects.", features: ["LAN/WAN networks", "Digital infrastructure planning", "Public-sector partnerships", "End-to-end support"] },
+    },
+    es: {
+      etudes: { title: "Estudios e Ingeniería", desc: "Antes del despliegue, realizamos un análisis completo del terreno, normativa y requisitos técnicos.", features: ["Estudios FTTH / FTTO", "Diseño de red", "Gestión SIG y cartografía", "Informes técnicos documentados"] },
+      deploiement: { title: "Despliegue de Redes", desc: "Desde obra civil hasta conexión óptica, realizamos el despliegue integral.", features: ["Obra civil y zanjas", "Redes aéreas", "Tendido y empalme de fibra", "Instalación de cajas"] },
+      raccordement: { title: "Conexión de Clientes", desc: "Del punto de distribución al abonado, activación validada con acta técnica.", features: ["FTTH residencial", "FTTO empresas", "Pruebas OTDR", "Asistencia de conexión"] },
+      maintenance: { title: "Mantenimiento y Soporte", desc: "Continuidad del servicio mediante mantenimiento preventivo y respuesta rápida.", features: ["Mantenimiento preventivo", "Localización de fallas", "Guardia 24/7", "Contratos de mantenimiento"] },
+      entreprises: { title: "Soluciones Empresariales", desc: "Acompañamos proyectos de infraestructura digital pública y privada.", features: ["Redes LAN/WAN", "Planificación digital", "Alianzas institucionales", "Acompañamiento integral"] },
+    },
+    pt: {
+      etudes: { title: "Estudos e Engenharia", desc: "Antes da implantação, realizamos análise completa do terreno, normas e requisitos técnicos.", features: ["Estudos FTTH / FTTO", "Projeto de rede", "Gestão SIG e cartografia", "Relatórios técnicos documentados"] },
+      deploiement: { title: "Implantação de Redes", desc: "Do civil ao óptico, executamos a implantação completa com equipamentos adequados ao território.", features: ["Obra civil e valas", "Redes aéreas", "Lançamento e fusão de fibra", "Instalação de caixas"] },
+      raccordement: { title: "Conexão de Clientes", desc: "Do ponto de distribuição ao assinante, ativação validada com documentação técnica.", features: ["FTTH residencial", "FTTO empresarial", "Testes OTDR", "Suporte de conexão"] },
+      maintenance: { title: "Manutenção e Suporte", desc: "Continuidade de serviço com manutenção preventiva e resposta rápida.", features: ["Manutenção preventiva", "Localização de falhas", "Plantão 24/7", "Contratos de manutenção"] },
+      entreprises: { title: "Soluções Empresariais", desc: "Apoiamos projetos digitais para setores público e privado.", features: ["Redes LAN/WAN", "Planejamento digital", "Parcerias institucionais", "Suporte completo"] },
+    },
+    nl: {
+      etudes: { title: "Studies & Engineering", desc: "Voor uitrol voeren wij een volledige analyse uit van terrein, regelgeving en technische eisen.", features: ["FTTH / FTTO haalbaarheidsstudies", "Netwerkontwerp", "GIS/cartografie", "Technische rapportage"] },
+      deploiement: { title: "Netwerkuitrol", desc: "Van civiele werken tot optische aansluiting: volledige uitvoering met lokaal geschikte middelen.", features: ["Civiele werken en sleuven", "Luchtlijnen", "Vezeltrekken en lassen", "Installatie verdeelpunten"] },
+      raccordement: { title: "Klantenaansluiting", desc: "Van distributiepunt tot abonnee met gevalideerde oplevering.", features: ["FTTH residentieel", "FTTO bedrijven", "OTDR-tests", "Aansluithulp"] },
+      maintenance: { title: "Onderhoud & Storing", desc: "Dienstcontinuïteit via preventief onderhoud en snelle interventie.", features: ["Preventief onderhoud", "Storingslokalisatie", "24/7 wachtdienst", "Onderhoudscontracten"] },
+      entreprises: { title: "Zakelijke Oplossingen", desc: "Wij ondersteunen publieke en private digitale infrastructuurprojecten.", features: ["LAN/WAN-netwerken", "Digitale planning", "Publieke partnerschappen", "Volledige begeleiding"] },
+    },
+    gcr: {
+      etudes: { title: "Étid épi Enjènyri", desc: "Avan déplwayman, nou ka fè analiz tèren, règleman épi kontrent teknik pou garanti fèzabilité.", features: ["Étid FTTH / FTTO", "Konsépsyon rézo", "Jèsyon SIG épi katografi", "Rapò teknik dokimanté"] },
+      deploiement: { title: "Déplwayman Rézo", desc: "Dépi jéni sivil jis rakorèman optik, nou ka fè tout déplwayman-an.", features: ["Jéni sivil épi tranché", "Rézo aérien", "Tiraj fib épi soudaj", "Instalasyon bwat"] },
+      raccordement: { title: "Rakorèman Klyan", desc: "Dépi PBO jis abonné-a, nou ka fè miz an sèrvis validé épi bon rékèt.", features: ["FTTH patikilyé", "FTTO biznis", "Tès OTDR", "Asistans koneksyon"] },
+      maintenance: { title: "Antrétyenn épi Dépannaj", desc: "Kontinite sèrvis ka garanti épi antrétyenn préventif épi entèrvansyon vit.", features: ["Antrétyenn préventif", "Lokalizasyon pann", "Astreynt 24/7", "Kontra antrétyenn"] },
+      entreprises: { title: "Solisyon Biznis", desc: "Nou ka akonpanyé aktè piblik épi privé an projé enfrastrikti dijital.", features: ["Rézo LAN/WAN", "Aménajman dijital", "Patnarya kolektivité", "Akonpayman global"] },
+    },
+    ar: {
+      etudes: { title: "الدراسات والهندسة", desc: "قبل أي تنفيذ، نجري تحليلًا كاملًا للميدان واللوائح والمتطلبات التقنية لضمان الجدوى.", features: ["دراسات FTTH / FTTO", "تصميم الشبكة", "إدارة GIS والخرائط", "تقارير تقنية موثقة"] },
+      deploiement: { title: "نشر الشبكات", desc: "من الأشغال المدنية إلى الربط البصري، ننفذ كامل المشروع بمعدات مناسبة للبيئة المحلية.", features: ["أشغال مدنية وخنادق", "شبكات هوائية", "سحب ولحام الألياف", "تركيب الصناديق"] },
+      raccordement: { title: "ربط العملاء", desc: "من نقطة التوزيع إلى العميل، تفعيل مُتحقق مع وثائق استلام.", features: ["FTTH للأفراد", "FTTO للشركات", "اختبارات OTDR", "دعم الاتصال"] },
+      maintenance: { title: "الصيانة والدعم", desc: "استمرارية الخدمة عبر صيانة وقائية وقدرة تدخل سريع.", features: ["صيانة وقائية", "تحديد الأعطال", "دعم 24/7", "عقود صيانة"] },
+      entreprises: { title: "حلول الأعمال", desc: "ندعم الجهات العامة والخاصة في مشاريع البنية الرقمية.", features: ["شبكات LAN/WAN", "تخطيط رقمي", "شراكات مؤسسية", "مرافقة شاملة"] },
+    },
+    zh: {
+      etudes: { title: "勘察与工程设计", desc: "在部署前，我们会对地形、法规和技术约束进行完整分析，确保项目可行。", features: ["FTTH / FTTO 可行性研究", "网络设计", "GIS 管理与制图", "技术文档报告"] },
+      deploiement: { title: "网络部署实施", desc: "从土建到光纤接入，我们提供全流程部署，适配当地环境条件。", features: ["土建与沟槽", "架空网络", "光纤敷设与熔接", "配线箱安装"] },
+      raccordement: { title: "客户接入开通", desc: "从分纤点到用户端，提供规范化测试、验收与开通。", features: ["家庭 FTTH", "企业 FTTO", "OTDR 测试与测量", "接入支持"] },
+      maintenance: { title: "运维与故障处理", desc: "通过预防性维护与快速响应，保障业务连续性。", features: ["预防性维护", "故障定位", "7x24 值守", "运维合同"] },
+      entreprises: { title: "企业级解决方案", desc: "为公共与私营机构提供数字基础设施项目支持。", features: ["LAN/WAN 网络", "数字化基础设施规划", "政企合作", "全流程支持"] },
+    },
+  }
+  const getLocalizedService = (service: any) => {
+    const local = servicesByLocale[locale]?.[service.id]
+    return {
+      title: local?.title ?? localizedField(service, "title"),
+      desc: local?.desc ?? localizedField(service, "desc"),
+      features: local?.features ?? service.features ?? [],
+    }
+  }
 
   return (
     <>
       <Navbar />
       <main>
-        <section className="pt-32 pb-16 px-4 md:px-8 lg:px-16 bg-gradient-to-b from-white/50 to-white dark:from-slate-950/50 dark:to-slate-950">
+        <section className="pt-32 pb-16 px-4 md:px-8 lg:px-16 bg-gradient-to-b from-slate-50 to-background dark:from-slate-950/50 dark:to-slate-950">
           <div className="container-wide text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full text-sm text-white/70 font-medium mb-6">
-              Nos prestations
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-muted rounded-full text-sm text-muted-foreground font-medium mb-6">
+              {text.badge}
             </div>
-            <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-5 text-balance">
-              Services fibre optique en Guyane
+            <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-5 text-balance">
+              {text.title}
             </h1>
-            <p className="text-white/60 text-lg leading-relaxed text-pretty">
-              De l&apos;étude de faisabilité à la maintenance long terme, GUYA FIBRE couvre l&apos;intégralité de la chaîne de valeur des réseaux fibre, avec une expertise unique adaptée au terrain guyanais.
+            <p className="text-muted-foreground text-lg leading-relaxed text-pretty">
+              {text.subtitle}
             </p>
           </div>
         </section>
@@ -138,6 +247,7 @@ export default function ServicesPage() {
             {displayServices.map((service: any, index: number) => {
               const IconComponent = ICON_MAP[service.icon] || Compass
               const isEven = index % 2 === 1
+              const local = getLocalizedService(service)
               return (
                 <article
                   key={service.id || service.slug}
@@ -153,13 +263,13 @@ export default function ServicesPage() {
                       <div className="h-px flex-1 bg-border" />
                     </div>
                     <h2 className="font-display text-3xl font-bold text-foreground mb-4 text-balance">
-                      {service.titleFr || service.title}
+                      {local.title}
                     </h2>
                     <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-6 text-pretty">
-                      {service.descFr || service.description}
+                      {local.desc}
                     </p>
                     <ul className="flex flex-col gap-3 mb-7">
-                      {(service.features || []).map((f: string, i: number) => (
+                      {(local.features || []).map((f: string, i: number) => (
                         <li key={i} className="flex items-start gap-3 text-sm text-foreground/80">
                           <CheckCircle2 className="w-4 h-4 text-[oklch(0.65_0.13_180)] shrink-0 mt-0.5" />
                           {f}
@@ -171,7 +281,7 @@ export default function ServicesPage() {
                       href="/contact"
                       className="inline-flex items-center gap-2 px-6 py-3 bg-[oklch(0.65_0.13_180)] text-white text-sm font-semibold rounded-lg hover:bg-[oklch(0.58_0.13_180)] transition-colors"
                     >
-                      Demander une prise de contact
+                      {t("nav.quote")}
                       <ArrowRight className="w-4 h-4" />
                     </Link>
                   </div>
@@ -179,7 +289,7 @@ export default function ServicesPage() {
                   <div className={`relative rounded-2xl overflow-hidden h-72 lg:h-96 ${isEven ? "lg:order-1" : ""}`}>
                     <Image
                       src={service.image || "/images/service-default.jpg"}
-                      alt={service.titleFr || service.title}
+                      alt={localizedField(service, "title")}
                       fill
                       className="object-cover"
                       sizes="(max-width: 1024px) 100vw, 50vw"

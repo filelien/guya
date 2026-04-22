@@ -7,6 +7,11 @@ import { useLanguage } from "@/lib/i18n/context"
 
 export function Footer() {
   const { t } = useLanguage()
+  const brandLine1 = t("footer.brandLine1")
+  const brandLine2 = t("footer.brandLine2")
+  const locationCity = t("footer.locationCity")
+  const locationCountry = t("footer.locationCountry")
+  const phoneRegion = t("footer.phoneRegion")
 
   const services = [
     { href: "/services#etudes", labelKey: "services.studies" },
@@ -29,7 +34,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
           {/* Column 1 — Brand */}
           <div className="lg:col-span-1">
-            <Link href="/" className="inline-block mb-5 dark:[filter:invert(1)_brightness(1.1)]">
+            <Link href="/" className="inline-block mb-5 [filter:invert(1)_brightness(1.1)] dark:[filter:none]">
               <Image
                 src="/images/logo.jpg"
                 alt="GUYA FIBRE"
@@ -96,7 +101,7 @@ export function Footer() {
                     <Phone className="w-4 h-4 text-primary" />
                   </div>
                   <div>
-                    <span className="text-xs text-muted-foreground block">Guyane (+594)</span>
+                    <span className="text-xs text-muted-foreground block">{phoneRegion}</span>
                     <span className="font-medium text-foreground">+594 06 94 43 54 84</span>
                   </div>
                 </a>
@@ -121,8 +126,8 @@ export function Footer() {
                     <MapPin className="w-4 h-4 text-primary" />
                   </div>
                   <div>
-                    <span className="block text-foreground">Saint-Laurent-du-Maroni</span>
-                    <span className="text-xs text-muted-foreground">Guyane française</span>
+                    <span className="block text-foreground">{locationCity}</span>
+                    <span className="text-xs text-muted-foreground">{locationCountry}</span>
                   </div>
                 </Link>
               </li>
@@ -149,16 +154,16 @@ export function Footer() {
                     alt="GUYA FIBRE"
                     width={180}
                     height={64}
-                    className="relative h-14 w-auto object-contain dark:[filter:invert(1)_brightness(1.1)]"
+                    className="relative h-14 w-auto object-contain [filter:invert(1)_brightness(1.1)] dark:[filter:none]"
                   />
                 </div>
                 <div className="hidden md:block h-12 w-px bg-gradient-to-b from-transparent via-primary/40 to-transparent" />
                 <div className="text-center md:text-left">
                   <p className="text-lg font-display font-bold text-foreground">
-                    Experts Fibre Optique
+                    {brandLine1}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Guyane Française 
+                    {brandLine2}
                   </p>
                 </div>
               </div>

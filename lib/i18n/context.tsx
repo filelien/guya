@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react"
 
-export type Locale = "fr" | "en" | "es" | "pt" | "nl" | "gcr"
+export type Locale = "fr" | "en" | "es" | "pt" | "nl" | "gcr" | "ar" | "zh"
 
 export interface Language {
   code: Locale
@@ -20,7 +20,19 @@ export const languages: Language[] = [
   { code: "pt", name: "Portuguese", nativeName: "Português", flag: "br", flagCode: "BR", countryCode: "+55" },
   { code: "nl", name: "Dutch", nativeName: "Nederlands", flag: "nl", flagCode: "NL", countryCode: "+31" },
   { code: "gcr", name: "Guianese Creole", nativeName: "Kréyòl Gwiyanè", flag: "gf", flagCode: "GF", countryCode: "+594" },
+  { code: "ar", name: "Arabic", nativeName: "العربية", flag: "sa", flagCode: "SA", countryCode: "+966" },
+  { code: "zh", name: "Chinese", nativeName: "中文", flag: "cn", flagCode: "CN", countryCode: "+86" },
 ]
+
+function getDocumentLanguage(locale: Locale): string {
+  if (locale === "gcr") return "fr"
+  if (locale === "zh") return "zh-CN"
+  return locale
+}
+
+function getDocumentDirection(locale: Locale): "ltr" | "rtl" {
+  return locale === "ar" ? "rtl" : "ltr"
+}
 
 interface LanguageContextType {
   locale: Locale
@@ -41,10 +53,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  useEffect(() => {
+    document.documentElement.lang = getDocumentLanguage(locale)
+    document.documentElement.dir = getDocumentDirection(locale)
+  }, [locale])
+
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale)
     localStorage.setItem("guyafibre-locale", newLocale)
-    document.documentElement.lang = newLocale === "gcr" ? "fr" : newLocale
   }
 
   const t = (key: string): string => {
@@ -74,7 +90,7 @@ export function useLanguage() {
 }
 
 // Translations
-const translations: Record<Locale, Record<string, unknown>> = {
+const translationsBase = {
   fr: {
     nav: {
       home: "Accueil",
@@ -88,7 +104,7 @@ const translations: Record<Locale, Record<string, unknown>> = {
     hero: {
       badge: "🇬🇫 En Guyane française — Experts depuis plusieurs années ",
       title: "Connecter la Guyane, du cœur urbain aux villages isolés",
-      subtitle: "De Cayenne aux profondeurs amazoniennes — GUYA FIBRE déploie les réseaux fibre optique les plus performants et fiables du territoire guyanais. Zones urbaines, rurales, fluviales, forestières : aucune barrière géographique ne nous arrête.",
+      subtitle: "De Cayenne aux profondeurs amazoniennes, GUYA FIBRE conçoit, déploie et maintient des infrastructures fibre optique de référence en Guyane française. Zones urbaines, rurales, fluviales ou forestières : notre excellence opérationnelle franchit chaque contrainte géographique pour offrir une connectivité durable, stable et hautement performante.",
       cta: "Demander une prise de contact",
       ctaSecondary: "Découvrir nos services",
     },
@@ -132,7 +148,9 @@ const translations: Record<Locale, Record<string, unknown>> = {
       freeQuoteDesc: "Chaque projet analysé individuellement. Propositions sans engagement. Solutions sur mesure.",
       founderName: "Shivaro Alasa",
       founderRole: "Fondateur & Directeur Technique",
-      founderBio: "Ingénieur réseaux passionné, Shivaro a fondé GUYA FIBRE avec une mission claire : connecter chaque recoin de la Guyane, transformer l'infrastructure numérique, créer des opportunités. 20+ ans d'expérience en télécom.",
+      founderBio: "Fondateur et directeur technique, Shivaro Alasa pilote GUYA FIBRE avec une vision claire : connecter durablement toute la Guyane, des centres urbains aux zones isolées. Son approche combine rigueur d'ingénierie, excellence opérationnelle et connaissance terrain locale.",
+      teamOnField: "Notre équipe sur le terrain",
+      teamOnFieldDesc: "Interventions sur tout le territoire guyanais",
     },
     contact: {
       title: "Parlons de votre projet fibre",
@@ -169,6 +187,13 @@ const translations: Record<Locale, Record<string, unknown>> = {
       byCar: "En voiture",
       byPlane: "En avion",
       gpsCoordinates: "Coordonnées GPS",
+      byCarDesc: "Depuis Cayenne, prendre la RN1 direction Saint-Laurent. À l'entrée de la ville, tourner à droite après le rond-point du port. Notre local se trouve à 200m sur la gauche.",
+      byCarTime: "2h30 depuis Cayenne",
+      byPlaneDesc: "Atterrissage à l'aéroport de Saint-Laurent-du-Maroni. Nous sommes à 10 minutes en voiture du centre-ville. Service de navette disponible sur demande.",
+      byPlaneTime: "45 min depuis Cayenne",
+      gpsCoordinatesDesc: "Latitude: 5.5026° N, Longitude: 54.0333° W. Entrez ces coordonnées dans votre GPS pour un guidage précis.",
+      gpsCoordinatesTime: "Navigation GPS",
+      openInGoogleMaps: "Ouvrir dans Google Maps",
     },
     forms: {
       personalInfo: "Informations personnelles",
@@ -218,6 +243,11 @@ const translations: Record<Locale, Record<string, unknown>> = {
       legalNotice: "Mentions légales",
       privacy: "Confidentialité",
       rights: "Tous droits réservés",
+      brandLine1: "Experts Fibre Optique",
+      brandLine2: "Guyane Française",
+      locationCity: "Saint-Laurent-du-Maroni",
+      locationCountry: "Guyane française",
+      phoneRegion: "Guyane (+594)",
     },
     common: {
       learnMore: "En savoir plus",
@@ -286,7 +316,9 @@ const translations: Record<Locale, Record<string, unknown>> = {
       freeQuoteDesc: "Each project is studied individually, without commitment.",
       founderName: "Shivaro Alasa",
       founderRole: "Director & Founder",
-      founderBio: "Passionate about networks and Guianese terrain, Shivaro founded GUYA FIBRE with the mission of connecting every corner of French Guiana.",
+      founderBio: "Founder and technical director, Shivaro Alasa leads GUYA FIBRE with one mission: deliver reliable fiber connectivity across all of French Guiana, from urban centers to remote areas.",
+      teamOnField: "Our team in the field",
+      teamOnFieldDesc: "Operations across all French Guiana",
     },
     contact: {
       title: "Contact Us",
@@ -323,6 +355,13 @@ const translations: Record<Locale, Record<string, unknown>> = {
       byCar: "By car",
       byPlane: "By plane",
       gpsCoordinates: "GPS coordinates",
+      byCarDesc: "From Cayenne, take RN1 toward Saint-Laurent-du-Maroni. At the town entrance, turn right after the port roundabout. Our office is 200m on the left.",
+      byCarTime: "About 2h30 from Cayenne",
+      byPlaneDesc: "Arrive at Saint-Laurent-du-Maroni airport. We are ~10 minutes by car from downtown. Shuttle available on request.",
+      byPlaneTime: "About 45 min from Cayenne",
+      gpsCoordinatesDesc: "Latitude: 5.5026° N, Longitude: 54.0333° W. Enter these coordinates for precise navigation.",
+      gpsCoordinatesTime: "GPS navigation",
+      openInGoogleMaps: "Open in Google Maps",
     },
     forms: {
       personalInfo: "Personal information",
@@ -372,6 +411,11 @@ const translations: Record<Locale, Record<string, unknown>> = {
       legalNotice: "Legal Notice",
       privacy: "Privacy",
       rights: "All rights reserved",
+      brandLine1: "Fiber Optic Experts",
+      brandLine2: "French Guiana",
+      locationCity: "Saint-Laurent-du-Maroni",
+      locationCountry: "French Guiana",
+      phoneRegion: "French Guiana (+594)",
     },
     common: {
       learnMore: "Learn more",
@@ -396,7 +440,7 @@ const translations: Record<Locale, Record<string, unknown>> = {
     hero: {
       badge: "En la Guayana Francesa — Operando en todo el territorio",
       title: "Conectando la Guayana Francesa hoy y mañana",
-      subtitle: "De Cayena a las profundidades amazónicas — GUYA FIBRE despliega las redes de fibra óptica más confiables y de alto rendimiento del territorio guyanés. Zonas urbanas, rurales, fluviales, forestales: ninguna barrera geográfica nos detiene.",
+      subtitle: "De Cayena a las profundidades amazónicas, GUYA FIBRE despliega redes de fibra óptica confiables, estables y de alto rendimiento en todo el territorio guyanés. Zonas urbanas, rurales, fluviales y forestales: ninguna barrera geográfica detiene nuestro compromiso.",
       cta: "Solicitar contacto",
       ctaSecondary: "Nuestros servicios",
     },
@@ -440,7 +484,9 @@ const translations: Record<Locale, Record<string, unknown>> = {
       freeQuoteDesc: "Cada proyecto se estudia individualmente, sin compromiso.",
       founderName: "Shivaro Alasa",
       founderRole: "Director y Fundador",
-      founderBio: "Apasionado por las redes y el terreno guyanés, Shivaro fundó GUYA FIBRE con la misión de conectar cada rincón de la Guayana.",
+      founderBio: "Fundador y director técnico, Shivaro Alasa dirige GUYA FIBRE con una misión clara: conectar toda la Guayana Francesa con redes de fibra confiables y sostenibles.",
+      teamOnField: "Nuestro equipo en terreno",
+      teamOnFieldDesc: "Intervenciones en toda la Guayana Francesa",
     },
     contact: {
       title: "Contáctenos",
@@ -477,6 +523,13 @@ const translations: Record<Locale, Record<string, unknown>> = {
       byCar: "En coche",
       byPlane: "En avión",
       gpsCoordinates: "Coordenadas GPS",
+      byCarDesc: "Desde Cayena, tome la RN1 hacia Saint-Laurent-du-Maroni. En la entrada, gire a la derecha después de la rotonda del puerto. Nuestro local está a 200 m a la izquierda.",
+      byCarTime: "2h30 desde Cayena",
+      byPlaneDesc: "Llegada al aeropuerto de Saint-Laurent-du-Maroni. Estamos a ~10 minutos en coche del centro. Servicio de traslado bajo solicitud.",
+      byPlaneTime: "45 min desde Cayena",
+      gpsCoordinatesDesc: "Latitud: 5.5026° N, Longitud: 54.0333° W. Ingrese estas coordenadas para un guiado preciso.",
+      gpsCoordinatesTime: "Navegación GPS",
+      openInGoogleMaps: "Abrir en Google Maps",
     },
     forms: {
       personalInfo: "Información personal",
@@ -526,6 +579,11 @@ const translations: Record<Locale, Record<string, unknown>> = {
       legalNotice: "Aviso legal",
       privacy: "Privacidad",
       rights: "Todos los derechos reservados",
+      brandLine1: "Expertos en fibra óptica",
+      brandLine2: "Guayana Francesa",
+      locationCity: "Saint-Laurent-du-Maroni",
+      locationCountry: "Guayana Francesa",
+      phoneRegion: "Guayana Francesa (+594)",
     },
     common: {
       learnMore: "Más información",
@@ -594,7 +652,9 @@ const translations: Record<Locale, Record<string, unknown>> = {
       freeQuoteDesc: "Cada projeto é estudado individualmente, sem compromisso.",
       founderName: "Shivaro Alasa",
       founderRole: "Diretor e Fundador",
-      founderBio: "Apaixonado por redes e pelo terreno guianense, Shivaro fundou a GUYA FIBRE com a missão de conectar cada canto da Guiana.",
+      founderBio: "Fundador e diretor técnico, Shivaro Alasa lidera a GUYA FIBRE com a missão de conectar toda a Guiana Francesa com redes de fibra confiáveis e duráveis.",
+      teamOnField: "Nossa equipe em campo",
+      teamOnFieldDesc: "Atuação em toda a Guiana Francesa",
     },
     contact: {
       title: "Contate-nos",
@@ -631,6 +691,13 @@ const translations: Record<Locale, Record<string, unknown>> = {
       byCar: "De carro",
       byPlane: "De avião",
       gpsCoordinates: "Coordenadas GPS",
+      byCarDesc: "De Caiena, pegue a RN1 em direção a Saint-Laurent-du-Maroni. Na entrada, vire à direita após a rotatória do porto. Nosso local fica a 200m à esquerda.",
+      byCarTime: "2h30 desde Caiena",
+      byPlaneDesc: "Chegada ao aeroporto de Saint-Laurent-du-Maroni. Estamos a ~10 minutos de carro do centro. Traslado sob demanda.",
+      byPlaneTime: "45 min desde Caiena",
+      gpsCoordinatesDesc: "Latitude: 5.5026° N, Longitude: 54.0333° W. Use estas coordenadas para navegação precisa.",
+      gpsCoordinatesTime: "Navegação GPS",
+      openInGoogleMaps: "Abrir no Google Maps",
     },
     forms: {
       personalInfo: "Informações pessoais",
@@ -680,6 +747,11 @@ const translations: Record<Locale, Record<string, unknown>> = {
       legalNotice: "Aviso legal",
       privacy: "Privacidade",
       rights: "Todos os direitos reservados",
+      brandLine1: "Especialistas em fibra óptica",
+      brandLine2: "Guiana Francesa",
+      locationCity: "Saint-Laurent-du-Maroni",
+      locationCountry: "Guiana Francesa",
+      phoneRegion: "Guiana Francesa (+594)",
     },
     common: {
       learnMore: "Saiba mais",
@@ -748,7 +820,9 @@ const translations: Record<Locale, Record<string, unknown>> = {
       freeQuoteDesc: "Elk project wordt individueel bestudeerd, zonder verplichting.",
       founderName: "Shivaro Alasa",
       founderRole: "Directeur & Oprichter",
-      founderBio: "Gepassioneerd door netwerken en het Guyanese terrein, richtte Shivaro GUYA FIBRE op met de missie om elke hoek van Guyana te verbinden.",
+      founderBio: "Als oprichter en technisch directeur leidt Shivaro Alasa GUYA FIBRE met één doel: heel Frans-Guyana betrouwbaar verbinden met hoogwaardige glasvezel.",
+      teamOnField: "Ons team in het veld",
+      teamOnFieldDesc: "Interventies in heel Frans-Guyana",
     },
     contact: {
       title: "Neem contact op",
@@ -785,6 +859,13 @@ const translations: Record<Locale, Record<string, unknown>> = {
       byCar: "Met de auto",
       byPlane: "Per vliegtuig",
       gpsCoordinates: "GPS-coördinaten",
+      byCarDesc: "Vanaf Cayenne neemt u de RN1 richting Saint-Laurent-du-Maroni. Bij binnenkomst rechtsaf na de rotonde van de haven. Ons kantoor ligt 200m links.",
+      byCarTime: "Ongeveer 2u30 vanaf Cayenne",
+      byPlaneDesc: "Aankomst op de luchthaven van Saint-Laurent-du-Maroni. Ongeveer 10 minuten rijden van het centrum. Shuttle op aanvraag.",
+      byPlaneTime: "Ongeveer 45 min vanaf Cayenne",
+      gpsCoordinatesDesc: "Latitude: 5.5026° N, Longitude: 54.0333° W. Gebruik deze coördinaten voor nauwkeurige navigatie.",
+      gpsCoordinatesTime: "GPS-navigatie",
+      openInGoogleMaps: "Openen in Google Maps",
     },
     forms: {
       personalInfo: "Persoonlijke informatie",
@@ -834,6 +915,11 @@ const translations: Record<Locale, Record<string, unknown>> = {
       legalNotice: "Juridische kennisgeving",
       privacy: "Privacy",
       rights: "Alle rechten voorbehouden",
+      brandLine1: "Glasvezel experts",
+      brandLine2: "Frans-Guyana",
+      locationCity: "Saint-Laurent-du-Maroni",
+      locationCountry: "Frans-Guyana",
+      phoneRegion: "Frans-Guyana (+594)",
     },
     common: {
       learnMore: "Meer informatie",
@@ -902,7 +988,9 @@ const translations: Record<Locale, Record<string, unknown>> = {
       freeQuoteDesc: "Chak projé étidyé individyèlman, san angajman.",
       founderName: "Shivaro Alasa",
       founderRole: "Dirijan épi Fondatè",
-      founderBio: "Pasyoné rézo épi tèren lagwiyanè, Shivaro fondé GUYA FIBRE pou konèkté chak kwen Lagwiyàn.",
+      founderBio: "Shivaro Alasa, fondatè épi dirijan teknik, ka mennen GUYA FIBRE pou konèkté tout Lagwiyàn épi rézo fib seryé, dirab épi adaptè pou tèren-an.",
+      teamOnField: "Lékip nou asou tèren-an",
+      teamOnFieldDesc: "Entèrvansyon toutpatou an Lagwiyàn",
     },
     contact: {
       title: "Kontakté Nou",
@@ -939,6 +1027,13 @@ const translations: Record<Locale, Record<string, unknown>> = {
       byCar: "Pa machin",
       byPlane: "Pa avyon",
       gpsCoordinates: "Korodoné GPS",
+      byCarDesc: "Soti Kayèn, pran RN1 alé Sen-Loran di Maroni. Lè ou rivé, vire adwat apré ronn-pwen pò-a. Lokal nou 200m asou goch.",
+      byCarTime: "2h30 soti Kayèn",
+      byPlaneDesc: "Lè ou rivé ayewopò Sen-Loran, nou ka 10 min an machin. Navèt ka fèt si ou mandé.",
+      byPlaneTime: "45 min soti Kayèn",
+      gpsCoordinatesDesc: "Latitid: 5.5026° N, Longitid: 54.0333° W. Mete sa an GPS pou jwenn nou byen.",
+      gpsCoordinatesTime: "Navigasyon GPS",
+      openInGoogleMaps: "Ouvri an Google Maps",
     },
     forms: {
       personalInfo: "Enfòmasyon pèsonel",
@@ -988,6 +1083,11 @@ const translations: Record<Locale, Record<string, unknown>> = {
       legalNotice: "Mansyon légal",
       privacy: "Konfidansyalité",
       rights: "Tout drwa rézèrvé",
+      brandLine1: "Ekspè fib optik",
+      brandLine2: "Lagwiyàn fransèz",
+      locationCity: "Sen-Loran di Maroni",
+      locationCountry: "Lagwiyàn fransèz",
+      phoneRegion: "Guyane (+594)",
     },
     common: {
       learnMore: "Plis enfòmasyon",
@@ -997,6 +1097,150 @@ const translations: Record<Locale, Record<string, unknown>> = {
       loading: "Ka chajé...",
       success: "Byen fèt!",
       error: "Érrè",
+    },
+  },
+}
+
+const translations: Record<Locale, Record<string, unknown>> = {
+  ...translationsBase,
+  ar: {
+    ...translationsBase.en,
+    nav: {
+      home: "الرئيسية",
+      about: "من نحن",
+      services: "الخدمات",
+      offers: "العروض",
+      projects: "المشاريع",
+      contact: "اتصل بنا",
+      quote: "طلب تواصل",
+    },
+    hero: {
+      badge: "في غويانا الفرنسية — نعمل في كل المناطق",
+      title: "نربط غويانا اليوم والمستقبل",
+      subtitle: "من كايين إلى عمق الأمازون، تنشر GUYA FIBRE شبكات ألياف موثوقة وعالية الأداء في المناطق الحضرية والريفية والنهرية والغابية.",
+      cta: "اطلب عرضًا مجانيًا",
+      ctaSecondary: "خدماتنا",
+    },
+    services: {
+      ...(translationsBase.en.services as Record<string, unknown>),
+      title: "خدماتنا",
+      subtitle: "حلول متكاملة لجميع احتياجات الألياف الضوئية",
+      studies: "الدراسات والهندسة",
+      deployment: "نشر الشبكات",
+      connection: "ربط العملاء",
+      maintenance: "الصيانة",
+      enterprise: "حلول الأعمال",
+    },
+    about: {
+      ...(translationsBase.en.about as Record<string, unknown>),
+      badge: "من نحن؟",
+      title: "شركة غويانية في قلب",
+      titleHighlight: "الميدان",
+      founderRole: "المؤسس والمدير التقني",
+      founderBio: "يقود شيفارو ألسا GUYA FIBRE برؤية واضحة: ربط كامل غويانا الفرنسية ببنية ألياف موثوقة وعالية الجودة.",
+      teamOnField: "فريقنا في الميدان",
+      teamOnFieldDesc: "تدخلات في كامل غويانا الفرنسية",
+    },
+    contact: {
+      ...(translationsBase.en.contact as Record<string, unknown>),
+      title: "تواصل معنا",
+      subtitle: "فريقنا يجيب بسرعة وعلى كل احتياجاتكم",
+      sendMessage: "إرسال الرسالة",
+      byCarDesc: "من كايين، اسلك RN1 نحو سان-لوران دو ماروني. عند المدخل انعطف يمينًا بعد دوار الميناء. مقرّنا يبعد 200م على اليسار.",
+      byCarTime: "حوالي 2س30 من كايين",
+      byPlaneDesc: "الوصول إلى مطار سان-لوران دو ماروني. نحن على بُعد ~10 دقائق بالسيارة من وسط المدينة. خدمة نقل عند الطلب.",
+      byPlaneTime: "حوالي 45 دقيقة من كايين",
+      gpsCoordinatesDesc: "خط العرض: 5.5026° شمالاً، خط الطول: 54.0333° غرباً. أدخل الإحداثيات للوصول بدقة.",
+      gpsCoordinatesTime: "ملاحة GPS",
+      openInGoogleMaps: "فتح في خرائط Google",
+    },
+    common: {
+      ...(translationsBase.en.common as Record<string, unknown>),
+      learnMore: "اعرف المزيد",
+      callUs: "اتصل بنا",
+    },
+    footer: {
+      ...(translationsBase.en.footer as Record<string, unknown>),
+      description: "خبير في نشر وصيانة شبكات الألياف الضوئية في غويانا الفرنسية.",
+      quickLinks: "روابط سريعة",
+      legalNotice: "الإشعار القانوني",
+      privacy: "الخصوصية",
+      rights: "جميع الحقوق محفوظة",
+      brandLine1: "خبراء الألياف الضوئية",
+      brandLine2: "غويانا الفرنسية",
+      locationCity: "سان-لوران دو ماروني",
+      locationCountry: "غويانا الفرنسية",
+      phoneRegion: "غويانا الفرنسية (+594)",
+    },
+  },
+  zh: {
+    ...translationsBase.en,
+    nav: {
+      home: "首页",
+      about: "关于我们",
+      services: "服务",
+      offers: "方案",
+      projects: "案例",
+      contact: "联系我们",
+      quote: "联系咨询",
+    },
+    hero: {
+      badge: "法属圭亚那本地团队 — 覆盖全域",
+      title: "连接法属圭亚那 当下与未来",
+      subtitle: "从卡宴到亚马逊腹地，GUYA FIBRE 在城市、乡村、沿河和林区提供稳定高性能光纤网络。",
+      cta: "获取免费报价",
+      ctaSecondary: "查看服务",
+    },
+    services: {
+      ...(translationsBase.en.services as Record<string, unknown>),
+      title: "我们的服务",
+      subtitle: "覆盖光纤项目全生命周期的一体化解决方案",
+      studies: "勘察与工程设计",
+      deployment: "网络部署实施",
+      connection: "客户接入开通",
+      maintenance: "运维与故障处理",
+      enterprise: "企业级解决方案",
+    },
+    about: {
+      ...(translationsBase.en.about as Record<string, unknown>),
+      badge: "我们是谁",
+      title: "扎根本地的",
+      titleHighlight: "专业团队",
+      founderRole: "创始人兼技术总监",
+      founderBio: "Shivaro Alasa 领导 GUYA FIBRE，以本地工程能力和严格交付标准，持续连接整个法属圭亚那。",
+      teamOnField: "一线实施团队",
+      teamOnFieldDesc: "覆盖法属圭亚那全境",
+    },
+    contact: {
+      ...(translationsBase.en.contact as Record<string, unknown>),
+      title: "联系我们",
+      subtitle: "我们的团队会快速回复并跟进您的项目",
+      sendMessage: "发送消息",
+      byCarDesc: "从卡宴出发沿 RN1 前往圣洛朗-迪马罗尼。入城后在港口环岛右转，沿 Palmiers 街行驶约 200 米即到。",
+      byCarTime: "距卡宴约 2 小时 30 分",
+      byPlaneDesc: "抵达圣洛朗-迪马罗尼机场后，驾车约 10 分钟可到市中心。可按需安排接驳。",
+      byPlaneTime: "距卡宴约 45 分钟",
+      gpsCoordinatesDesc: "纬度：5.5026°N，经度：54.0333°W。输入坐标可精准导航到门店。",
+      gpsCoordinatesTime: "GPS 导航",
+      openInGoogleMaps: "在 Google 地图中打开",
+    },
+    common: {
+      ...(translationsBase.en.common as Record<string, unknown>),
+      learnMore: "了解更多",
+      callUs: "立即致电",
+    },
+    footer: {
+      ...(translationsBase.en.footer as Record<string, unknown>),
+      description: "法属圭亚那光纤网络部署与运维专家。",
+      quickLinks: "快捷链接",
+      legalNotice: "法律声明",
+      privacy: "隐私政策",
+      rights: "版权所有",
+      brandLine1: "光纤网络专家",
+      brandLine2: "法属圭亚那",
+      locationCity: "圣洛朗-迪马罗尼",
+      locationCountry: "法属圭亚那",
+      phoneRegion: "法属圭亚那（+594）",
     },
   },
 }

@@ -16,6 +16,7 @@ export function Navbar() {
   const [servicesOpen, setServicesOpen] = useState(false)
   const pathname = usePathname()
   const { t } = useLanguage()
+  const isHomeTop = pathname === '/' && !isScrolled && !mobileOpen
 
   const navLinks = [
     { href: '/', label: t('nav.home') },
@@ -50,15 +51,17 @@ export function Navbar() {
     <header
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-md',
-        isScrolled
-          ? 'bg-white/95 dark:bg-slate-950/95 shadow-lg border-b border-slate-200 dark:border-slate-800'
-          : 'bg-white/90 dark:bg-slate-950/90 border-b border-slate-200/70 dark:border-slate-800/70'
+        isHomeTop
+          ? 'bg-transparent border-transparent shadow-none'
+          : isScrolled
+            ? 'bg-white/80 dark:bg-slate-950/75 shadow-lg border-b border-slate-200/60 dark:border-slate-800/60'
+            : 'bg-white/65 dark:bg-slate-950/60 border-b border-slate-200/50 dark:border-slate-800/50'
       )}
     >
       <div className="mx-auto flex items-center justify-between h-16 md:h-20 px-4 md:px-6 lg:px-10 max-w-[1600px]">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 shrink-0">
-          <div className="relative w-32 h-10 md:w-40 md:h-12 dark:[filter:invert(1)_brightness(1.1)]">
+          <div className="relative w-32 h-10 md:w-40 md:h-12 [filter:invert(1)_brightness(1.1)] dark:[filter:none]">
             {/* Logo - adapté au mode clair et sombre */}
             <Image
               src="/images/logo.jpg"
@@ -80,7 +83,12 @@ export function Navbar() {
                 onMouseEnter={() => setServicesOpen(true)}
                 onMouseLeave={() => setServicesOpen(false)}
               >
-                <button className="flex items-center gap-1 px-3 py-2 text-foreground hover:text-primary transition-colors">
+                <button
+                  className={cn(
+                    'flex items-center gap-1 px-3 py-2 transition-colors',
+                    isHomeTop ? 'text-white hover:text-white/80' : 'text-foreground hover:text-primary'
+                  )}
+                >
                   {link.label}
                   <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
                 </button>
@@ -103,10 +111,10 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  'px-3 py-2 text-foreground transition-colors',
+                  'px-3 py-2 transition-colors',
                   pathname === link.href
-                    ? 'text-primary font-semibold'
-                    : 'hover:text-primary'
+                    ? isHomeTop ? 'text-white font-semibold underline underline-offset-4' : 'text-primary font-semibold'
+                    : isHomeTop ? 'text-white hover:text-white/80' : 'text-foreground hover:text-primary'
                 )}
               >
                 {link.label}
@@ -121,16 +129,24 @@ export function Navbar() {
           <ThemeToggle />
           <Link
             href="/devis"
-            className="px-5 py-2.5 bg-primary text-primary-foreground text-sm font-semibold rounded-full hover:bg-primary/90 transition-all hover:scale-105 active:scale-95"
+            className={cn(
+              'px-5 py-2.5 text-sm font-semibold rounded-full transition-all hover:scale-105 active:scale-95',
+              isHomeTop
+                ? 'bg-white/15 text-white border border-white/35 hover:bg-white/25'
+                : 'bg-primary text-primary-foreground hover:bg-primary/90'
+            )}
           >
-            Prise de contact
+            {t('nav.quote')}
           </Link>
         </div>
 
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="lg:hidden p-2 text-foreground hover:text-primary transition-colors"
+          className={cn(
+            'lg:hidden p-2 transition-colors',
+            isHomeTop ? 'text-white hover:text-white/80' : 'text-foreground hover:text-primary'
+          )}
           aria-label="Menu mobile"
         >
           {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -185,7 +201,7 @@ export function Navbar() {
               href="/devis"
               className="w-full py-3 bg-primary text-primary-foreground text-sm font-semibold rounded-lg text-center hover:bg-primary/90 transition-colors"
             >
-              Prise de contact
+              {t('nav.quote')}
             </Link>
           </div>
         </div>

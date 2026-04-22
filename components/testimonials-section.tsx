@@ -1,4 +1,7 @@
+"use client"
+
 import { Quote, Star } from "lucide-react"
+import { useLanguage } from "@/lib/i18n/context"
 
 const testimonials = [
   {
@@ -31,19 +34,31 @@ const testimonials = [
 ]
 
 export function TestimonialsSection() {
+  const { locale } = useLanguage()
+  const labels = {
+    fr: { badge: "Avis clients", title: "Ce que disent nos clients", subtitle: "Des particuliers, entreprises et collectivités de toute la Guyane nous font confiance." },
+    en: { badge: "Client reviews", title: "What our clients say", subtitle: "Individuals, businesses and public entities across French Guiana trust us." },
+    es: { badge: "Opiniones", title: "Lo que dicen nuestros clientes", subtitle: "Particulares, empresas y entidades públicas confían en nosotros." },
+    pt: { badge: "Depoimentos", title: "O que dizem nossos clientes", subtitle: "Particulares, empresas e coletividades confiam em nós em toda a Guiana." },
+    nl: { badge: "Klantbeoordelingen", title: "Wat onze klanten zeggen", subtitle: "Particulieren, bedrijven en overheden in heel Frans-Guyana vertrouwen op ons." },
+    gcr: { badge: "Avis klyan", title: "Sa klyan nou ka di", subtitle: "Patikilyé, biznis épi kolektivité ka fè konfyans an nou toutpatou an Lagwiyàn." },
+    ar: { badge: "آراء العملاء", title: "ماذا يقول عملاؤنا", subtitle: "أفراد وشركات وجهات عامة في كل غويانا يثقون بخدماتنا." },
+    zh: { badge: "客户评价", title: "客户怎么说", subtitle: "法属圭亚那各地的个人、企业与公共机构都在信赖我们。" },
+  } as const
+  const text = labels[locale as keyof typeof labels] || labels.fr
   return (
     <section className="section-padding bg-background">
       <div className="container-wide">
         {/* Header */}
         <div className="text-center max-w-xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 rounded-full text-sm text-primary font-medium mb-5 border border-primary/20">
-            Avis clients
+            {text.badge}
           </div>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4 text-balance">
-            Ce que disent nos clients
+            {text.title}
           </h2>
           <p className="text-muted-foreground text-lg leading-relaxed text-pretty">
-            Des particuliers, entreprises et collectivités de toute la Guyane nous font confiance.
+            {text.subtitle}
           </p>
         </div>
 

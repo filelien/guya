@@ -19,6 +19,7 @@ import {
 const COMPANY_LOCATION = {
   lat: 5.5026,
   lng: -54.0333,
+  placeName: "GUYA FIBRE, Saint-Laurent-du-Maroni",
   address: "12 Rue des Palmiers",
   city: "Saint-Laurent-du-Maroni",
   postalCode: "97320",
@@ -67,7 +68,8 @@ export function InteractiveMap() {
   }
 
   const openGoogleMaps = () => {
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${COMPANY_LOCATION.lat},${COMPANY_LOCATION.lng}&travelmode=${selectedMode}`
+    const destination = encodeURIComponent(`${COMPANY_LOCATION.placeName} ${COMPANY_LOCATION.address}`)
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=${selectedMode}`
     window.open(url, "_blank")
   }
 
@@ -83,7 +85,7 @@ export function InteractiveMap() {
         <CardContent className="p-0">
           <div className="aspect-video relative">
             <iframe
-              src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15892.388273099205!2d${COMPANY_LOCATION.lng}!3d${COMPANY_LOCATION.lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8d155a4c4e2c1a1b%3A0x1234567890abcdef!2sSaint-Laurent-du-Maroni%2C%20French%20Guiana!5e0!3m2!1sfr!2sfr!4v1710000000000!5m2!1sfr!2sfr`}
+              src={`https://www.google.com/maps?q=${COMPANY_LOCATION.lat},${COMPANY_LOCATION.lng}&z=18&hl=fr&output=embed`}
               width="100%"
               height="100%"
               style={{ border: 0 }}
@@ -92,6 +94,13 @@ export function InteractiveMap() {
               referrerPolicy="no-referrer-when-downgrade"
               className="absolute inset-0"
             />
+            <div className="absolute top-4 left-4 z-10 rounded-full bg-background/90 backdrop-blur-sm border border-border px-3 py-1.5 shadow-md flex items-center gap-2">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary" />
+              </span>
+              <span className="text-xs font-semibold text-foreground">GUYA FIBRE</span>
+            </div>
           </div>
         </CardContent>
       </Card>

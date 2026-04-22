@@ -104,8 +104,8 @@ export function AboutSection() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-4 left-4 right-4">
-                <p className="text-white text-sm font-medium">Notre équipe sur le terrain</p>
-                <p className="text-white/70 text-xs">Interventions sur tout le territoire guyanais</p>
+                <p className="text-white text-sm font-medium">{t("about.teamOnField")}</p>
+                <p className="text-white/70 text-xs">{t("about.teamOnFieldDesc")}</p>
               </div>
             </div>
 

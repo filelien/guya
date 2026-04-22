@@ -59,7 +59,98 @@ const services = [
 ]
 
 export function ServicesSection() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
+  const localized = {
+    fr: {
+      ctaTitle: "Un projet fibre en Guyane ?",
+      features: [
+        ["Études de faisabilité FTTH / FTTO", "Conception et plans APS / APD / DOE", "Cartographie SIG géoréférencée", "Dossiers réglementaires DT / DICT"],
+        ["Génie civil : tranchées, fourreaux, chambres", "Réseaux aériens sur poteaux", "Tirage de fibre et soudure par fusion", "Installation PBO / BPE / PM"],
+        ["FTTH particuliers : PTO, ONT, mise en service", "FTTO entreprises : fibre dédiée", "Tests et mesures OTDR", "Validation finale et bon de recette"],
+        ["Inspections périodiques et contrôles OTDR", "Localisation de pannes par réflectométrie", "Diagnostic des équipements actifs", "Interventions d'urgence 7j/7"],
+        ["Réseaux d'infrastructure interne", "Smart city et projets territoriaux", "Infrastructures publiques", "Accompagnement sur mesure"],
+      ],
+      benefits: ["Conception optimisée", "Infrastructure durable", "Mise en service rapide", "Disponibilité garantie", "Sur mesure"],
+    },
+    en: {
+      ctaTitle: "A fiber project in French Guiana?",
+      features: [
+        ["FTTH / FTTO feasibility studies", "APS / APD / DOE design plans", "Georeferenced GIS mapping", "Regulatory DT / DICT files"],
+        ["Civil works: trenches, ducts, chambers", "Aerial networks on poles", "Fiber pulling and fusion splicing", "PBO / BPE / PM installation"],
+        ["Residential FTTH: PTO, ONT, activation", "Business FTTO: dedicated fiber", "OTDR testing and measurements", "Final validation and acceptance report"],
+        ["Periodic inspections and OTDR checks", "Fault location by reflectometry", "Active equipment diagnostics", "24/7 emergency interventions"],
+        ["Internal infrastructure networks", "Smart city and regional projects", "Public infrastructures", "Tailored support"],
+      ],
+      benefits: ["Optimized design", "Durable infrastructure", "Fast activation", "Guaranteed availability", "Tailored"],
+    },
+    es: {
+      ctaTitle: "¿Un proyecto de fibra en Guayana?",
+      features: [
+        ["Estudios de viabilidad FTTH / FTTO", "Planos APS / APD / DOE", "Cartografía SIG georreferenciada", "Expedientes reglamentarios DT / DICT"],
+        ["Obra civil: zanjas, conductos, cámaras", "Redes aéreas sobre postes", "Tendido de fibra y fusión", "Instalación PBO / BPE / PM"],
+        ["FTTH residencial: PTO, ONT, activación", "FTTO empresas: fibra dedicada", "Pruebas y mediciones OTDR", "Validación final y acta de recepción"],
+        ["Inspecciones periódicas y controles OTDR", "Localización de fallas por reflectometría", "Diagnóstico de equipos activos", "Intervenciones de emergencia 24/7"],
+        ["Redes de infraestructura interna", "Smart city y proyectos territoriales", "Infraestructuras públicas", "Acompañamiento a medida"],
+      ],
+      benefits: ["Diseño optimizado", "Infraestructura duradera", "Puesta en servicio rápida", "Disponibilidad garantizada", "A medida"],
+    },
+    pt: {
+      ctaTitle: "Um projeto de fibra na Guiana?",
+      features: [
+        ["Estudos de viabilidade FTTH / FTTO", "Planos APS / APD / DOE", "Cartografia SIG georreferenciada", "Dossiês regulatórios DT / DICT"],
+        ["Obra civil: valas, dutos, câmaras", "Redes aéreas em postes", "Lançamento de fibra e fusão", "Instalação PBO / BPE / PM"],
+        ["FTTH residencial: PTO, ONT, ativação", "FTTO empresas: fibra dedicada", "Testes e medições OTDR", "Validação final e aceite técnico"],
+        ["Inspeções periódicas e controles OTDR", "Localização de falhas por reflectometria", "Diagnóstico de equipamentos ativos", "Intervenções de urgência 24/7"],
+        ["Redes de infraestrutura interna", "Smart city e projetos territoriais", "Infraestruturas públicas", "Acompanhamento sob medida"],
+      ],
+      benefits: ["Projeto otimizado", "Infraestrutura durável", "Ativação rápida", "Disponibilidade garantida", "Sob medida"],
+    },
+    nl: {
+      ctaTitle: "Een glasvezelproject in Guyana?",
+      features: [
+        ["FTTH / FTTO haalbaarheidsstudies", "APS / APD / DOE plannen", "Gegeorefereerde GIS-cartografie", "Regelgevende DT / DICT dossiers"],
+        ["Civiele werken: sleuven, buizen, kamers", "Luchtlijnen op palen", "Vezeltrekken en fusielassen", "Installatie PBO / BPE / PM"],
+        ["FTTH residentieel: PTO, ONT, activatie", "FTTO bedrijven: dedicated glasvezel", "OTDR-tests en metingen", "Eindvalidatie en oplevering"],
+        ["Periodieke inspecties en OTDR-controles", "Storingslokalisatie met reflectometrie", "Diagnose actieve apparatuur", "24/7 noodinterventies"],
+        ["Interne infrastructuurnetwerken", "Smart city en gebiedsprojecten", "Publieke infrastructuren", "Begeleiding op maat"],
+      ],
+      benefits: ["Geoptimaliseerd ontwerp", "Duurzame infrastructuur", "Snelle ingebruikname", "Gegarandeerde beschikbaarheid", "Op maat"],
+    },
+    gcr: {
+      ctaTitle: "On projé fib an Lagwiyàn?",
+      features: [
+        ["Étid fèzabilité FTTH / FTTO", "Plan APS / APD / DOE", "Katografi SIG jéyoréféransé", "Dosyé réglementè DT / DICT"],
+        ["Jéni sivil: tranché, fouro, chanm", "Rézo aérien anlè poto", "Tiraj fib épi soudaj fusion", "Instalasyon PBO / BPE / PM"],
+        ["FTTH patikilyé: PTO, ONT, miz an sèrvis", "FTTO biznis: fib dédiyé", "Tès épi mezi OTDR", "Validasyon final épi bon rékèt"],
+        ["Enspeksyon périodik épi kontwòl OTDR", "Lokalizasyon pann pa réfléktométri", "Dyagnostik ekipman aktif", "Entèrvansyon ijans 7j/7"],
+        ["Rézo enfrastrikti anndan", "Smart city épi projé téritoryal", "Enfrastrikti piblik", "Akonpayman sou mezi"],
+      ],
+      benefits: ["Konsépsyon optimizé", "Enfrastrikti dirab", "Miz an sèrvis vit", "Disponibilité garantiy", "Sou mezi"],
+    },
+    ar: {
+      ctaTitle: "هل لديك مشروع ألياف في غويانا؟",
+      features: [
+        ["دراسات جدوى FTTH / FTTO", "تصاميم وخطط APS / APD / DOE", "خرائط GIS مرجعية جغرافيًا", "ملفات تنظيمية DT / DICT"],
+        ["أشغال مدنية: خنادق وقنوات وغرف", "شبكات هوائية على الأعمدة", "سحب الألياف واللحام بالانصهار", "تركيب PBO / BPE / PM"],
+        ["FTTH للأفراد: PTO وONT والتفعيل", "FTTO للشركات: ألياف مخصصة", "اختبارات وقياسات OTDR", "التحقق النهائي ومحضر الاستلام"],
+        ["فحوصات دورية واختبارات OTDR", "تحديد الأعطال بالانعكاسية", "تشخيص المعدات النشطة", "تدخلات طارئة 24/7"],
+        ["شبكات بنية تحتية داخلية", "مشاريع المدن الذكية والمناطق", "بنى تحتية عامة", "مرافقة حسب الحاجة"],
+      ],
+      benefits: ["تصميم مُحسّن", "بنية تحتية متينة", "تفعيل سريع", "جاهزية مضمونة", "حلول مخصّصة"],
+    },
+    zh: {
+      ctaTitle: "在法属圭亚那有光纤项目吗？",
+      features: [
+        ["FTTH / FTTO 可行性研究", "APS / APD / DOE 设计图纸", "地理参考 GIS 制图", "DT / DICT 合规文件"],
+        ["土建工程：沟槽、管道、井室", "杆路架空网络", "光缆敷设与熔接", "PBO / BPE / PM 安装"],
+        ["家庭 FTTH：PTO、ONT 与开通", "企业 FTTO：专线光纤", "OTDR 测试与测量", "最终验收与交付报告"],
+        ["周期巡检与 OTDR 复测", "反射法故障定位", "有源设备诊断", "7x24 紧急响应"],
+        ["内部基础设施网络", "智慧城市与区域项目", "公共基础设施", "按需定制支持"],
+      ],
+      benefits: ["优化设计", "耐久基础设施", "快速开通", "可用性保障", "定制方案"],
+    },
+  } as const
+  const content = localized[locale as keyof typeof localized] || localized.fr
 
   return (
     <section id="services" className="section-padding bg-background">
@@ -112,7 +203,7 @@ export function ServicesSection() {
                   <p className="text-sm text-muted-foreground leading-relaxed mb-4">{t(service.descKey)}</p>
 
                   <ul className="flex flex-col gap-2 mb-5 flex-1">
-                    {service.features.map((f) => (
+                    {content.features[Number(service.number) - 1].map((f) => (
                       <li key={f} className="flex items-start gap-2 text-sm text-foreground/80">
                         <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                         {f}
@@ -123,7 +214,7 @@ export function ServicesSection() {
                   {/* Benefit badge */}
                   <div className="flex items-center justify-between border-t border-border pt-4 mt-auto">
                     <span className="text-xs text-primary font-medium bg-primary/10 px-3 py-1 rounded-full">
-                      {service.benefit}
+                      {content.benefits[Number(service.number) - 1]}
                     </span>
                     <Link
                       href="/devis"
@@ -141,7 +232,7 @@ export function ServicesSection() {
           <div className="bg-secondary dark:bg-card rounded-2xl p-8 flex flex-col items-start justify-between border border-border">
             <div>
               <h3 className="font-display text-xl font-bold text-foreground mb-3 text-balance">
-                Un projet fibre en Guyane ?
+                {content.ctaTitle}
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed mb-6">
                 {t("contact.subtitle")}

@@ -54,13 +54,12 @@ export function ContactSection() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
                     <label htmlFor="contact-name" className="text-sm font-medium text-foreground">
-                      {t("contact.name")} <span className="text-destructive" aria-hidden>*</span>
+                      {t("contact.name")}
                     </label>
                     <input
                       id="contact-name"
                       name="name"
                       type="text"
-                      required
                       value={form.name}
                       onChange={handleChange}
                       placeholder={t("contact.name")}
@@ -83,13 +82,12 @@ export function ContactSection() {
 
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor="contact-email" className="text-sm font-medium text-foreground">
-                    {t("contact.email")} <span className="text-destructive" aria-hidden>*</span>
+                    {t("contact.email")}
                   </label>
                   <input
                     id="contact-email"
                     name="email"
                     type="email"
-                    required
                     value={form.email}
                     onChange={handleChange}
                     placeholder="votre@email.com"
@@ -99,12 +97,11 @@ export function ContactSection() {
 
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor="contact-message" className="text-sm font-medium text-foreground">
-                    {t("contact.message")} <span className="text-destructive" aria-hidden>*</span>
+                    {t("contact.message")}
                   </label>
                   <textarea
                     id="contact-message"
                     name="message"
-                    required
                     rows={5}
                     value={form.message}
                     onChange={handleChange}

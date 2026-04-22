@@ -19,6 +19,8 @@ const flagUrls: Record<Locale, string> = {
   pt: "https://flagcdn.com/w40/br.png",
   nl: "https://flagcdn.com/w40/nl.png",
   gcr: "https://flagcdn.com/w40/gf.png",
+  ar: "https://flagcdn.com/w40/sa.png",
+  zh: "https://flagcdn.com/w40/cn.png",
 }
 
 export function LanguageSwitcher() {

@@ -20,11 +20,27 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'GUYA FIBRE — Experts Fibre Optique en Guyane',
-  description: 'Entreprise guyanaise spécialisée dans le déploiement, la maintenance et les études de réseaux fibre optique. Intervention sur toute la Guyane — zones urbaines, rurales et isolées.',
-  keywords: 'fibre optique, FTTH, FTTO, Guyane, déploiement fibre, maintenance réseau, Saint-Laurent-du-Maroni, ingénierie réseau',
+  metadataBase: new URL('https://guyafibre.com'),
+  title: {
+    default: 'GUYA FIBRE | Entreprise de référence en fibre optique en Guyane française (FTTH / FTTO)',
+    template: '%s | GUYA FIBRE - Réseaux fibre optique en Guyane',
+  },
+  description:
+    'Entreprise de référence en Guyane française, GUYA FIBRE conçoit, déploie et maintient des réseaux fibre optique FTTH/FTTO à haute performance. De Cayenne aux zones les plus isolées, nos équipes assurent une connectivité durable pour particuliers, entreprises et collectivités.',
+  keywords: [
+    'fibre optique Guyane',
+    'FTTH Guyane',
+    'FTTO Guyane',
+    'raccordement fibre',
+    'maintenance réseau fibre',
+    'déploiement fibre optique',
+    'ingénierie télécom Guyane',
+    'Saint-Laurent-du-Maroni',
+    'Cayenne',
+  ],
   authors: [{ name: 'GUYA FIBRE', url: 'https://guyafibre.com' }],
   creator: 'GUYA FIBRE',
+  publisher: 'GUYA FIBRE',
   manifest: '/manifest.json',
   icons: {
     icon: [
@@ -47,9 +63,10 @@ export const metadata: Metadata = {
     address: true,
   },
   openGraph: {
-    title: 'GUYA FIBRE — Experts Fibre Optique en Guyane',
-    description: 'Déploiement et maintenance de réseaux fibre optique sur tout le territoire guyanais.',
-    url: 'https://guyafibre.com',
+    title: 'GUYA FIBRE | Fibre optique en Guyane (FTTH / FTTO)',
+    description:
+      'GUYA FIBRE, entreprise guyanaise experte, déploie et maintient des réseaux fibre optique FTTH/FTTO robustes et évolutifs, de Cayenne aux zones rurales, fluviales et forestières.',
+    url: '/',
     siteName: 'GUYA FIBRE',
     images: [
       {
@@ -70,13 +87,25 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'GUYA FIBRE — Experts Fibre Optique',
-    description: 'Solutions fibre optique complètes en Guyane',
-    images: ['https://guyafibre.com/images/hero-bg.jpg'],
+    title: 'GUYA FIBRE | Fibre optique en Guyane',
+    description:
+      'GUYA FIBRE accompagne toute la Guyane française avec des solutions FTTH/FTTO premium : ingénierie, déploiement, raccordement et maintenance.',
+    images: ['/images/hero-bg.jpg'],
     creator: '@guyafibre',
   },
   alternates: {
-    canonical: 'https://guyafibre.com',
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
   },
 }
 
@@ -109,7 +138,8 @@ export default function RootLayout({
               '@context': 'https://schema.org',
               '@type': 'LocalBusiness',
               name: 'GUYA FIBRE',
-              description: 'Entreprise guyanaise spécialisée dans le déploiement et la maintenance de réseaux fibre optique',
+              description:
+                'Entreprise guyanaise experte en ingénierie et déploiement fibre optique, GUYA FIBRE accompagne durablement les particuliers, entreprises et collectivités, de Cayenne aux zones isolées de l’intérieur.',
               url: 'https://guyafibre.com',
               telephone: '+594 694435484',
               email: 'contact@guyafibre.com',
@@ -127,9 +157,10 @@ export default function RootLayout({
                 longitude: -54.0333,
               },
               openingHours: 'Mo-Fr 08:00-18:00, Sa 08:00-12:00',
+              areaServed: 'Guyane française',
               sameAs: ['https://wa.me/594694435484'],
               image: 'https://guyafibre.com/images/logo.jpg',
-              logo: 'https://guyafibre.com/icon.png',
+              logo: 'https://guyafibre.com/images/logo.jpg',
               priceRange: '$$',
             }),
           }}

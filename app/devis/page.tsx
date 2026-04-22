@@ -39,6 +39,7 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 import { devisApi, CreateDevisRequest } from "@/lib/api/devis.api"
+import { useLanguage } from "@/lib/i18n/context"
 
 const serviceOptions = [
   { id: "etudes", label: "Études techniques & Conception", icon: "📐" },
@@ -62,14 +63,8 @@ const urgencyOptions = [
   { value: "tres-urgent", label: "Très urgent (sous 12h)", color: "bg-red-500/20 text-red-400" },
 ]
 
-const steps = [
-  { id: 1, title: "Informations", icon: User },
-  { id: 2, title: "Projet", icon: Building2 },
-  { id: 3, title: "Services", icon: Zap },
-  { id: 4, title: "Détails", icon: FileText },
-]
-
 export default function DevisPage() {
+  const { t } = useLanguage()
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState({
     firstName: "",
@@ -93,6 +88,12 @@ export default function DevisPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const steps = [
+    { id: 1, title: t("forms.personalInfo"), icon: User },
+    { id: 2, title: t("forms.projectInfo"), icon: Building2 },
+    { id: 3, title: t("forms.services"), icon: Zap },
+    { id: 4, title: t("forms.details"), icon: FileText },
+  ]
 
   const handleServiceToggle = (serviceId: string) => {
     setFormData(prev => ({
@@ -123,7 +124,7 @@ export default function DevisPage() {
       case 1:
         return formData.firstName && formData.lastName && formData.email && formData.phone
       case 2:
-        return formData.projectType && formData.address && formData.postalCode && formData.city
+        return formData.projectType
       case 3:
         return formData.services.length > 0
       case 4:
@@ -182,14 +183,8 @@ export default function DevisPage() {
                     <CheckCircle2 className="w-12 h-12 text-primary" />
                   </div>
                 </div>
-                <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Prise de contact envoyée avec succès !
-                </h1>
-                <p className="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed max-w-md mx-auto">
-                  Merci pour votre prise de contact. Notre équipe va l&apos;analyser et vous 
-                  recontactera dans les plus brefs délais. Un récapitulatif a été envoyé 
-                  à votre adresse email.
-                </p>
+                <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">{t("forms.success")}</h1>
+                <p className="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed max-w-md mx-auto">{t("forms.successMessage")}</p>
                 
                 {/* Reference number */}
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 mb-8">
@@ -237,14 +232,13 @@ export default function DevisPage() {
             <div className="max-w-3xl mx-auto text-center">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 mb-6 animate-pulse-glow">
                 <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-primary text-sm font-medium">Demande de prise de contact</span>
+                <span className="text-primary text-sm font-medium">{t("forms.requestQuote")}</span>
               </div>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 text-balance">
-                Prenez contact avec notre équipe
+                {t("nav.quote")}
               </h1>
               <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed max-w-2xl mx-auto">
-                Remplissez le formulaire ci-dessous et notre équipe vous recontactera 
-                sous 24 à 48 heures. Notre équipe d&apos;experts analysera votre projet.
+                {t("forms.tellUsAboutProject")}
               </p>
             </div>
           </div>
@@ -437,10 +431,9 @@ export default function DevisPage() {
                           <div className="grid md:grid-cols-2 gap-4">
                             <div className="md:col-span-2 space-y-2">
                               <label className="block text-sm font-medium text-foreground flex items-center gap-2">
-                                <MapPin className="w-4 h-4 text-primary" /> Adresse d&apos;intervention *
+                                <MapPin className="w-4 h-4 text-primary" /> Adresse d&apos;intervention
                               </label>
                               <Input 
-                                required
                                 value={formData.address}
                                 onChange={e => setFormData({...formData, address: e.target.value})}
                                 className="bg-background border-input"
@@ -448,9 +441,8 @@ export default function DevisPage() {
                               />
                             </div>
                             <div className="space-y-2">
-                              <label className="block text-sm font-medium text-foreground">Boîte postale *</label>
+                              <label className="block text-sm font-medium text-foreground">Boîte postale</label>
                               <Input 
-                                required
                                 value={formData.postalCode}
                                 onChange={e => setFormData({...formData, postalCode: e.target.value})}
                                 className="bg-background border-input"
@@ -650,7 +642,7 @@ export default function DevisPage() {
                             variant="outline"
                             onClick={() => setCurrentStep(currentStep - 1)}
                           >
-                            Retour
+                            {t("forms.back")}
                           </Button>
                         ) : (
                           <div />
@@ -664,17 +656,17 @@ export default function DevisPage() {
                           {isSubmitting ? (
                             <>
                               <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin mr-2" />
-                              Envoi en cours...
+                              {t("forms.sending")}
                             </>
                           ) : currentStep < 4 ? (
                             <>
-                              Continuer
+                              {t("forms.continue")}
                               <ArrowRight className="w-4 h-4 ml-2" />
                             </>
                           ) : (
                             <>
                               <Send className="w-4 h-4 mr-2" />
-                              Envoyer ma demande
+                              {t("forms.submit")}
                             </>
                           )}
                         </Button>

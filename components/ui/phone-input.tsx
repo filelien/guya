@@ -17,10 +17,12 @@ export interface CountryCode {
   flag: string
   nameEn: string
   nameFr: string
-  nameEs: string
-  namePt: string
-  nameNl: string
-  nameGcr: string
+  nameEs?: string
+  namePt?: string
+  nameNl?: string
+  nameGcr?: string
+  nameAr?: string
+  nameZh?: string
 }
 
 // Complete country list - 100+ countries with multilingual names
@@ -97,6 +99,142 @@ export const COUNTRY_CODES: CountryCode[] = [
   { code: "+971", flag: "🇦🇪", nameFr: "Émirats Arabes Unis", nameEn: "UAE", nameEs: "Emiratos Árabes", namePt: "Emirados Árabes", nameNl: "V.A.E", nameGcr: "Emirats Arabe" },
   { code: "+61", flag: "🇦🇺", nameFr: "Australie", nameEn: "Australia", nameEs: "Australia", namePt: "Austrália", nameNl: "Australië", nameGcr: "Ostrali" },
   { code: "+64", flag: "🇳🇿", nameFr: "Nouvelle-Zélande", nameEn: "New Zealand", nameEs: "Nueva Zelanda", namePt: "Nova Zelândia", nameNl: "Nieuw-Zeeland", nameGcr: "Nouvel Zelan" },
+  // ADDED COUNTRIES / TERRITORIES
+  { code: "+93", flag: "🇦🇫", nameFr: "Afghanistan", nameEn: "Afghanistan" },
+  { code: "+355", flag: "🇦🇱", nameFr: "Albanie", nameEn: "Albania" },
+  { code: "+376", flag: "🇦🇩", nameFr: "Andorre", nameEn: "Andorra" },
+  { code: "+244", flag: "🇦🇴", nameFr: "Angola", nameEn: "Angola" },
+  { code: "+374", flag: "🇦🇲", nameFr: "Arménie", nameEn: "Armenia" },
+  { code: "+994", flag: "🇦🇿", nameFr: "Azerbaïdjan", nameEn: "Azerbaijan" },
+  { code: "+973", flag: "🇧🇭", nameFr: "Bahreïn", nameEn: "Bahrain" },
+  { code: "+375", flag: "🇧🇾", nameFr: "Biélorussie", nameEn: "Belarus" },
+  { code: "+32", flag: "🇧🇪", nameFr: "Belgique", nameEn: "Belgium" },
+  { code: "+501", flag: "🇧🇿", nameFr: "Belize", nameEn: "Belize" },
+  { code: "+229", flag: "🇧🇯", nameFr: "Bénin", nameEn: "Benin" },
+  { code: "+975", flag: "🇧🇹", nameFr: "Bhoutan", nameEn: "Bhutan" },
+  { code: "+387", flag: "🇧🇦", nameFr: "Bosnie-Herzégovine", nameEn: "Bosnia and Herzegovina" },
+  { code: "+267", flag: "🇧🇼", nameFr: "Botswana", nameEn: "Botswana" },
+  { code: "+673", flag: "🇧🇳", nameFr: "Brunéi", nameEn: "Brunei" },
+  { code: "+855", flag: "🇰🇭", nameFr: "Cambodge", nameEn: "Cambodia" },
+  { code: "+237", flag: "🇨🇲", nameFr: "Cameroun", nameEn: "Cameroon" },
+  { code: "+238", flag: "🇨🇻", nameFr: "Cap-Vert", nameEn: "Cape Verde" },
+  { code: "+236", flag: "🇨🇫", nameFr: "Centrafrique", nameEn: "Central African Republic" },
+  { code: "+235", flag: "🇹🇩", nameFr: "Tchad", nameEn: "Chad" },
+  { code: "+269", flag: "🇰🇲", nameFr: "Comores", nameEn: "Comoros" },
+  { code: "+242", flag: "🇨🇬", nameFr: "Congo", nameEn: "Congo" },
+  { code: "+243", flag: "🇨🇩", nameFr: "RD Congo", nameEn: "DR Congo" },
+  { code: "+506", flag: "🇨🇷", nameFr: "Costa Rica", nameEn: "Costa Rica" },
+  { code: "+53", flag: "🇨🇺", nameFr: "Cuba", nameEn: "Cuba" },
+  { code: "+357", flag: "🇨🇾", nameFr: "Chypre", nameEn: "Cyprus" },
+  { code: "+420", flag: "🇨🇿", nameFr: "Tchéquie", nameEn: "Czech Republic" },
+  { code: "+253", flag: "🇩🇯", nameFr: "Djibouti", nameEn: "Djibouti" },
+  { code: "+1", flag: "🇩🇴", nameFr: "République dominicaine", nameEn: "Dominican Republic" },
+  { code: "+670", flag: "🇹🇱", nameFr: "Timor oriental", nameEn: "Timor-Leste" },
+  { code: "+503", flag: "🇸🇻", nameFr: "Salvador", nameEn: "El Salvador" },
+  { code: "+240", flag: "🇬🇶", nameFr: "Guinée équatoriale", nameEn: "Equatorial Guinea" },
+  { code: "+291", flag: "🇪🇷", nameFr: "Érythrée", nameEn: "Eritrea" },
+  { code: "+372", flag: "🇪🇪", nameFr: "Estonie", nameEn: "Estonia" },
+  { code: "+251", flag: "🇪🇹", nameFr: "Éthiopie", nameEn: "Ethiopia" },
+  { code: "+679", flag: "🇫🇯", nameFr: "Fidji", nameEn: "Fiji" },
+  { code: "+241", flag: "🇬🇦", nameFr: "Gabon", nameEn: "Gabon" },
+  { code: "+220", flag: "🇬🇲", nameFr: "Gambie", nameEn: "Gambia" },
+  { code: "+995", flag: "🇬🇪", nameFr: "Géorgie", nameEn: "Georgia" },
+  { code: "+350", flag: "🇬🇮", nameFr: "Gibraltar", nameEn: "Gibraltar" },
+  { code: "+224", flag: "🇬🇳", nameFr: "Guinée", nameEn: "Guinea" },
+  { code: "+245", flag: "🇬🇼", nameFr: "Guinée-Bissau", nameEn: "Guinea-Bissau" },
+  { code: "+592", flag: "🇬🇾", nameFr: "Guyana", nameEn: "Guyana" },
+  { code: "+509", flag: "🇭🇹", nameFr: "Haïti", nameEn: "Haiti" },
+  { code: "+504", flag: "🇭🇳", nameFr: "Honduras", nameEn: "Honduras" },
+  { code: "+852", flag: "🇭🇰", nameFr: "Hong Kong", nameEn: "Hong Kong" },
+  { code: "+354", flag: "🇮🇸", nameFr: "Islande", nameEn: "Iceland" },
+  { code: "+964", flag: "🇮🇶", nameFr: "Irak", nameEn: "Iraq" },
+  { code: "+353", flag: "🇮🇪", nameFr: "Irlande", nameEn: "Ireland" },
+  { code: "+972", flag: "🇮🇱", nameFr: "Israël", nameEn: "Israel" },
+  { code: "+1876", flag: "🇯🇲", nameFr: "Jamaïque", nameEn: "Jamaica" },
+  { code: "+962", flag: "🇯🇴", nameFr: "Jordanie", nameEn: "Jordan" },
+  { code: "+7", flag: "🇰🇿", nameFr: "Kazakhstan", nameEn: "Kazakhstan" },
+  { code: "+254", flag: "🇰🇪", nameFr: "Kenya", nameEn: "Kenya" },
+  { code: "+686", flag: "🇰🇮", nameFr: "Kiribati", nameEn: "Kiribati" },
+  { code: "+965", flag: "🇰🇼", nameFr: "Koweït", nameEn: "Kuwait" },
+  { code: "+996", flag: "🇰🇬", nameFr: "Kirghizistan", nameEn: "Kyrgyzstan" },
+  { code: "+856", flag: "🇱🇦", nameFr: "Laos", nameEn: "Laos" },
+  { code: "+371", flag: "🇱🇻", nameFr: "Lettonie", nameEn: "Latvia" },
+  { code: "+961", flag: "🇱🇧", nameFr: "Liban", nameEn: "Lebanon" },
+  { code: "+266", flag: "🇱🇸", nameFr: "Lesotho", nameEn: "Lesotho" },
+  { code: "+231", flag: "🇱🇷", nameFr: "Libéria", nameEn: "Liberia" },
+  { code: "+218", flag: "🇱🇾", nameFr: "Libye", nameEn: "Libya" },
+  { code: "+423", flag: "🇱🇮", nameFr: "Liechtenstein", nameEn: "Liechtenstein" },
+  { code: "+370", flag: "🇱🇹", nameFr: "Lituanie", nameEn: "Lithuania" },
+  { code: "+352", flag: "🇱🇺", nameFr: "Luxembourg", nameEn: "Luxembourg" },
+  { code: "+853", flag: "🇲🇴", nameFr: "Macao", nameEn: "Macau" },
+  { code: "+389", flag: "🇲🇰", nameFr: "Macédoine du Nord", nameEn: "North Macedonia" },
+  { code: "+261", flag: "🇲🇬", nameFr: "Madagascar", nameEn: "Madagascar" },
+  { code: "+265", flag: "🇲🇼", nameFr: "Malawi", nameEn: "Malawi" },
+  { code: "+960", flag: "🇲🇻", nameFr: "Maldives", nameEn: "Maldives" },
+  { code: "+223", flag: "🇲🇱", nameFr: "Mali", nameEn: "Mali" },
+  { code: "+356", flag: "🇲🇹", nameFr: "Malte", nameEn: "Malta" },
+  { code: "+692", flag: "🇲🇭", nameFr: "Îles Marshall", nameEn: "Marshall Islands" },
+  { code: "+222", flag: "🇲🇷", nameFr: "Mauritanie", nameEn: "Mauritania" },
+  { code: "+52", flag: "🇲🇽", nameFr: "Mexique", nameEn: "Mexico" },
+  { code: "+691", flag: "🇫🇲", nameFr: "Micronésie", nameEn: "Micronesia" },
+  { code: "+373", flag: "🇲🇩", nameFr: "Moldavie", nameEn: "Moldova" },
+  { code: "+377", flag: "🇲🇨", nameFr: "Monaco", nameEn: "Monaco" },
+  { code: "+976", flag: "🇲🇳", nameFr: "Mongolie", nameEn: "Mongolia" },
+  { code: "+382", flag: "🇲🇪", nameFr: "Monténégro", nameEn: "Montenegro" },
+  { code: "+258", flag: "🇲🇿", nameFr: "Mozambique", nameEn: "Mozambique" },
+  { code: "+95", flag: "🇲🇲", nameFr: "Myanmar", nameEn: "Myanmar" },
+  { code: "+264", flag: "🇳🇦", nameFr: "Namibie", nameEn: "Namibia" },
+  { code: "+674", flag: "🇳🇷", nameFr: "Nauru", nameEn: "Nauru" },
+  { code: "+977", flag: "🇳🇵", nameFr: "Népal", nameEn: "Nepal" },
+  { code: "+227", flag: "🇳🇪", nameFr: "Niger", nameEn: "Niger" },
+  { code: "+505", flag: "🇳🇮", nameFr: "Nicaragua", nameEn: "Nicaragua" },
+  { code: "+47", flag: "🇳🇴", nameFr: "Norvège", nameEn: "Norway" },
+  { code: "+968", flag: "🇴🇲", nameFr: "Oman", nameEn: "Oman" },
+  { code: "+92", flag: "🇵🇰", nameFr: "Pakistan", nameEn: "Pakistan" },
+  { code: "+680", flag: "🇵🇼", nameFr: "Palaos", nameEn: "Palau" },
+  { code: "+970", flag: "🇵🇸", nameFr: "Palestine", nameEn: "Palestine" },
+  { code: "+507", flag: "🇵🇦", nameFr: "Panama", nameEn: "Panama" },
+  { code: "+675", flag: "🇵🇬", nameFr: "Papouasie-Nouvelle-Guinée", nameEn: "Papua New Guinea" },
+  { code: "+63", flag: "🇵🇭", nameFr: "Philippines", nameEn: "Philippines" },
+  { code: "+351", flag: "🇵🇹", nameFr: "Portugal", nameEn: "Portugal" },
+  { code: "+974", flag: "🇶🇦", nameFr: "Qatar", nameEn: "Qatar" },
+  { code: "+262", flag: "🇷🇪", nameFr: "La Réunion", nameEn: "Réunion" },
+  { code: "+250", flag: "🇷🇼", nameFr: "Rwanda", nameEn: "Rwanda" },
+  { code: "+1869", flag: "🇰🇳", nameFr: "Saint-Christophe-et-Niévès", nameEn: "Saint Kitts and Nevis" },
+  { code: "+1758", flag: "🇱🇨", nameFr: "Sainte-Lucie", nameEn: "Saint Lucia" },
+  { code: "+1784", flag: "🇻🇨", nameFr: "Saint-Vincent-et-les-Grenadines", nameEn: "Saint Vincent and the Grenadines" },
+  { code: "+685", flag: "🇼🇸", nameFr: "Samoa", nameEn: "Samoa" },
+  { code: "+378", flag: "🇸🇲", nameFr: "Saint-Marin", nameEn: "San Marino" },
+  { code: "+239", flag: "🇸🇹", nameFr: "Sao Tomé-et-Principe", nameEn: "Sao Tome and Principe" },
+  { code: "+381", flag: "🇷🇸", nameFr: "Serbie", nameEn: "Serbia" },
+  { code: "+248", flag: "🇸🇨", nameFr: "Seychelles", nameEn: "Seychelles" },
+  { code: "+232", flag: "🇸🇱", nameFr: "Sierra Leone", nameEn: "Sierra Leone" },
+  { code: "+421", flag: "🇸🇰", nameFr: "Slovaquie", nameEn: "Slovakia" },
+  { code: "+386", flag: "🇸🇮", nameFr: "Slovénie", nameEn: "Slovenia" },
+  { code: "+677", flag: "🇸🇧", nameFr: "Îles Salomon", nameEn: "Solomon Islands" },
+  { code: "+252", flag: "🇸🇴", nameFr: "Somalie", nameEn: "Somalia" },
+  { code: "+94", flag: "🇱🇰", nameFr: "Sri Lanka", nameEn: "Sri Lanka" },
+  { code: "+249", flag: "🇸🇩", nameFr: "Soudan", nameEn: "Sudan" },
+  { code: "+597", flag: "🇸🇷", nameFr: "Suriname", nameEn: "Suriname" },
+  { code: "+268", flag: "🇸🇿", nameFr: "Eswatini", nameEn: "Eswatini" },
+  { code: "+963", flag: "🇸🇾", nameFr: "Syrie", nameEn: "Syria" },
+  { code: "+886", flag: "🇹🇼", nameFr: "Taïwan", nameEn: "Taiwan" },
+  { code: "+992", flag: "🇹🇯", nameFr: "Tadjikistan", nameEn: "Tajikistan" },
+  { code: "+228", flag: "🇹🇬", nameFr: "Togo", nameEn: "Togo" },
+  { code: "+676", flag: "🇹🇴", nameFr: "Tonga", nameEn: "Tonga" },
+  { code: "+1868", flag: "🇹🇹", nameFr: "Trinité-et-Tobago", nameEn: "Trinidad and Tobago" },
+  { code: "+90", flag: "🇹🇷", nameFr: "Turquie", nameEn: "Turkey" },
+  { code: "+993", flag: "🇹🇲", nameFr: "Turkménistan", nameEn: "Turkmenistan" },
+  { code: "+688", flag: "🇹🇻", nameFr: "Tuvalu", nameEn: "Tuvalu" },
+  { code: "+380", flag: "🇺🇦", nameFr: "Ukraine", nameEn: "Ukraine" },
+  { code: "+598", flag: "🇺🇾", nameFr: "Uruguay", nameEn: "Uruguay" },
+  { code: "+998", flag: "🇺🇿", nameFr: "Ouzbékistan", nameEn: "Uzbekistan" },
+  { code: "+678", flag: "🇻🇺", nameFr: "Vanuatu", nameEn: "Vanuatu" },
+  { code: "+379", flag: "🇻🇦", nameFr: "Vatican", nameEn: "Vatican City" },
+  { code: "+84", flag: "🇻🇳", nameFr: "Vietnam", nameEn: "Vietnam" },
+  { code: "+967", flag: "🇾🇪", nameFr: "Yémen", nameEn: "Yemen" },
+  { code: "+260", flag: "🇿🇲", nameFr: "Zambie", nameEn: "Zambia" },
+  { code: "+263", flag: "🇿🇼", nameFr: "Zimbabwe", nameEn: "Zimbabwe" },
 ]
 
 interface PhoneInputProps {
@@ -111,10 +249,12 @@ interface PhoneInputProps {
 function getCountryName(country: CountryCode, locale: string): string {
   switch(locale) {
     case "en": return country.nameEn
-    case "es": return country.nameEs
-    case "pt": return country.namePt
-    case "nl": return country.nameNl
-    case "gcr": return country.nameGcr
+    case "es": return country.nameEs || country.nameEn
+    case "pt": return country.namePt || country.nameEn
+    case "nl": return country.nameNl || country.nameEn
+    case "gcr": return country.nameGcr || country.nameFr
+    case "ar": return country.nameAr || country.nameEn
+    case "zh": return country.nameZh || country.nameEn
     default: return country.nameFr
   }
 }
@@ -130,19 +270,34 @@ export function PhoneInput({
   const { locale } = useLanguage()
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState("")
+  const priorityCountryCodes = useMemo(() => ["+594", "+33", "+44", "+34", "+55", "+31", "+966", "+86"], [])
 
-  const selectedCountry = COUNTRY_CODES.find(
+  const sortedCountries = useMemo(() => {
+    const uniqueCountries = COUNTRY_CODES.filter((country, index, array) => {
+      const key = `${country.code}-${country.flag}`
+      return array.findIndex((item) => `${item.code}-${item.flag}` === key) === index
+    })
+
+    const priority = uniqueCountries.filter((country) => priorityCountryCodes.includes(country.code))
+    const others = uniqueCountries
+      .filter((country) => !priorityCountryCodes.includes(country.code))
+      .sort((a, b) => getCountryName(a, locale).localeCompare(getCountryName(b, locale), locale))
+
+    return [...priority, ...others]
+  }, [locale, priorityCountryCodes])
+
+  const selectedCountry = sortedCountries.find(
     c => c.code === countryCode && getCountryName(c, locale) 
-  ) || COUNTRY_CODES[0]
+  ) || sortedCountries[0]
 
   const filteredCountries = useMemo(() => {
-    if (!search) return COUNTRY_CODES
+    if (!search) return sortedCountries
     const lowerSearch = search.toLowerCase()
-    return COUNTRY_CODES.filter(country => {
+    return sortedCountries.filter(country => {
       const name = getCountryName(country, locale).toLowerCase()
       return name.includes(lowerSearch) || country.code.includes(lowerSearch)
     })
-  }, [search, locale])
+  }, [search, locale, sortedCountries])
 
   const getPlaceholder = (): string => {
     if (placeholder) return placeholder
@@ -156,6 +311,8 @@ export function PhoneInput({
                             locale === "pt" ? "Pesquisar país..." :
                             locale === "nl" ? "Land zoeken..." :
                             locale === "gcr" ? "Chèche peyi..." :
+                            locale === "ar" ? "ابحث عن دولة..." :
+                            locale === "zh" ? "搜索国家..." :
                             "Chercher un pays..."
 
   const noResultsText = locale === "en" ? "No countries found" :
@@ -163,6 +320,8 @@ export function PhoneInput({
                         locale === "pt" ? "Nenhum país encontrado" :
                         locale === "nl" ? "Geen landen gevonden" :
                         locale === "gcr" ? "Pa gen peyi" :
+                        locale === "ar" ? "لم يتم العثور على دول" :
+                        locale === "zh" ? "未找到国家" :
                         "Aucun pays trouvé"
 
   return (
@@ -171,14 +330,14 @@ export function PhoneInput({
         <DropdownMenuTrigger asChild>
           <Button
             variant="outline"
-            className="w-32 min-w-[8rem] h-10 px-3 justify-between font-medium text-sm hover:bg-accent transition-all duration-200 animate-in fade-in-50"
+            className="w-28 min-w-[7rem] h-9 px-2.5 justify-between font-medium text-xs hover:bg-accent transition-all duration-200 animate-in fade-in-50"
             size="sm"
           >
             <span className="flex items-center gap-2 min-w-0">
-              <span className="text-lg">{selectedCountry.flag}</span>
-              <span className="text-xs font-semibold">{countryCode}</span>
+              <span className="text-base">{selectedCountry.flag}</span>
+              <span className="text-[11px] font-semibold">{countryCode}</span>
             </span>
-            <ChevronDown className="w-4 h-4 opacity-50 flex-shrink-0 transition-transform duration-200" />
+            <ChevronDown className="w-3.5 h-3.5 opacity-50 flex-shrink-0 transition-transform duration-200" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-72 p-0">
@@ -254,7 +413,7 @@ export function PhoneInput({
         }}
         placeholder={getPlaceholder()}
         required={required}
-        className="flex-1 h-10 text-sm transition-all focus:ring-2 focus:ring-primary/30"
+        className="flex-1 h-9 text-[13px] transition-all focus:ring-2 focus:ring-primary/30"
         autoComplete="tel"
         inputMode="tel"
       />
