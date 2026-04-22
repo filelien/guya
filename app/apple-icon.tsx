@@ -9,7 +9,7 @@ export const size = {
 
 export default async function AppleIcon() {
   try {
-    const logoResponse = await fetch(new URL('../public/images/logo.jpg', import.meta.url))
+    const logoResponse = await fetch(new URL('../public/images/site-icon.png', import.meta.url))
     if (!logoResponse.ok) throw new Error('Logo fetch failed')
     
     const logoBuffer = await logoResponse.arrayBuffer()
@@ -21,7 +21,7 @@ export default async function AppleIcon() {
           style={{
             width: '100%',
             height: '100%',
-            background: 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #0891b2 100%)',
+            background: '#000000',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -30,25 +30,13 @@ export default async function AppleIcon() {
             borderRadius: '40px',
           }}
         >
-          {/* Pattern overlay */}
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.08) 10px, rgba(255,255,255,0.08) 20px)',
-              borderRadius: '40px',
-            }}
-          />
-
-          {/* Logo */}
           <img
-            src={`data:image/jpeg;base64,${logoBase64}`}
+            src={`data:image/png;base64,${logoBase64}`}
             style={{
               position: 'relative',
-              width: '85%',
-              height: '85%',
+              width: '100%',
+              height: '100%',
               objectFit: 'contain',
-              filter: 'brightness(1.15) drop-shadow(0 4px 16px rgba(0,0,0,0.4))',
               borderRadius: '36px',
             }}
             alt="GUYA FIBRE"
